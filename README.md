@@ -27,7 +27,7 @@ Use `npm run build` for a production build.
 - QA score ranges 0-135: each of the four Client Experience dimensions is worth up to 33.75 points (Exceeds Expectations scores above the 25-point base). In the CX score averages, Exceeds Expectations is weighted 120 and the other ratings 100, 80, 60, and 0, so an average can exceed 100%.
 - Overall QA pass is "Yes" when the QA score is at least 80 and Resolution is not rated "0% - Opportunity to Improve".
 - Product Reviews is marked Planned for Phase 2: non-interactive, greyed out, and focusable with release guidance on hover or focus (Escape dismisses it).
-- Layout is capped at a 1920px wide by 900px tall canvas. From 1500px wide the KPI cards sit in one row and the advisor table sits beside the charts; narrower windows stack the sections. The Chanel logo is a text wordmark placeholder; replace it with the approved brand asset. ABChanel Corpo falls back to Helvetica when the font is not installed.
+- Layout is capped at a 1920px wide by 900px tall canvas. From 1760px wide the KPI cards sit in one row and the advisor table sits beside the charts without scrolling; narrower windows stack the sections and the page scrolls vertically. The Chanel logo is a text wordmark placeholder; replace it with the approved brand asset. ABChanel Corpo falls back to Helvetica when the font is not installed.
 
 ## Refresh cycle
 

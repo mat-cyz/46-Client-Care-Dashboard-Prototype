@@ -694,7 +694,7 @@ tbody th {
 }
 
 /* Wide canvas: up to 1920px wide and 900px tall, KPIs in one row and advisors beside the charts */
-@media (min-width: 1500px) {
+@media (min-width: 1760px) {
   .app-shell {
     grid-template-columns: 220px minmax(0, 1fr);
     height: min(100vh, 900px);
@@ -810,7 +810,7 @@ tbody th {
   }
 
   th, td {
-    padding: 4px 8px;
+    padding: 4px 6px;
   }
 
   .legend {
