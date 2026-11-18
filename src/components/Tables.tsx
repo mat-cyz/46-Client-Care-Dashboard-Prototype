@@ -17,10 +17,8 @@ export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
         <thead>
           <tr>
             <th scope="col">Advisor</th>
-            <th scope="col">Manager</th>
             <th scope="col" className="num">Evals</th>
             <th scope="col" className="num">Avg QA</th>
-            <th scope="col" className="num">Vs target</th>
             <th scope="col" className="num">Pass rate</th>
             <th scope="col">Lowest CX area</th>
             <th scope="col">Coaching</th>
@@ -30,10 +28,8 @@ export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
           {rows.map((row) => (
             <tr key={row.advisor}>
               <th scope="row">{row.advisor}</th>
-              <td>{row.manager}</td>
               <td className="num">{fmtInt(row.volume)}</td>
               <td className="num">{fmtScore(row.avgQa)}</td>
-              <td className="num">{fmtSigned(row.avgQa - QA_TARGET)}</td>
               <td className="num">{fmtPct(row.passRate)}</td>
               <td>{row.lowestDimension.label} ({fmtPct(row.lowestDimension.score)})</td>
               <td><span className={`flag flag-${row.flag.replace(' ', '-').toLowerCase()}`}>{FLAG_ICON[row.flag]}{row.flag}</span></td>

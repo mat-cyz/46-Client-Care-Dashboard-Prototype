@@ -40,7 +40,7 @@ export interface Summary {
 }
 
 export interface TrendPoint {
-  month: string
+  label: string
   avgQa: number | null
   volume: number
   selected: boolean

@@ -70,8 +70,8 @@ Salesforce Quality Assessment object with potential key fields:
 - Client Experience Communication Score
 
 ## Canvas Size and Design
-- Max-width 1080px 
-- Max-Length 1920px
+- Max-width 1920px 
+- Max-Length 900px
 
 ## Links for logos
 Refer to Chanel website for styling, logos, and colors:

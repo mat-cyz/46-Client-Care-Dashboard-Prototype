@@ -42,10 +42,10 @@ function TrendDot({ cx, cy, payload }: TrendDotProps) {
 export function TrendChart({ points }: { points: TrendPoint[] }) {
   return (
     <div className="chart" role="img" aria-label="Line chart of average QA score by month with target of 80">
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width="100%" height={165}>
         <LineChart data={points} margin={{ top: 16, right: 16, bottom: 0, left: -10 }}>
           <CartesianGrid vertical={false} stroke={GRID} />
-          <XAxis dataKey="month" tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
+          <XAxis dataKey="label" interval={points.length > 12 ? 1 : 0} tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
           <YAxis
             tick={TICK}
             tickLine={false}
@@ -67,7 +67,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
             isAnimationActive={false}
             dot={(props: unknown) => {
               const { cx, cy, payload } = props as TrendDotProps
-              return <TrendDot key={payload?.month} cx={cx} cy={cy} payload={payload} />
+              return <TrendDot key={payload?.label} cx={cx} cy={cy} payload={payload} />
             }}
           />
         </LineChart>
@@ -80,7 +80,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
 export function DistributionChart({ rows }: { rows: DistributionRow[] }) {
   return (
     <div className="chart" role="img" aria-label="Stacked bar chart of rating distribution for each Client Experience category">
-      <ResponsiveContainer width="100%" height={210}>
+      <ResponsiveContainer width="100%" height={150}>
         <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 8, bottom: 0, left: 0 }} barCategoryGap={10}>
           <XAxis type="number" domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickFormatter={(v: number) => `${v}%`} tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
           <YAxis type="category" dataKey="dimension" width={118} tick={{ ...TICK, fill: INK }} tickLine={false} axisLine={false} />
@@ -118,7 +118,7 @@ export function TeamRankChart({ rows }: { rows: TeamRow[] }) {
   const data = rows.map((row) => ({ ...row, label: `#${row.rank} ${teamLabel(row.team)}` }))
   return (
     <div className="chart" role="img" aria-label="Bar chart ranking teams by average QA score">
-      <ResponsiveContainer width="100%" height={Math.max(200, data.length * 46 + 30)}>
+      <ResponsiveContainer width="100%" height={Math.max(150, data.length * 34 + 20)}>
         <BarChart data={data} layout="vertical" margin={{ top: 8, right: 36, bottom: 0, left: 0 }} barCategoryGap={12}>
           <CartesianGrid horizontal={false} stroke={GRID} />
           <XAxis type="number" domain={[0, QA_MAX]} ticks={[0, 40, 80, 120]} tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
@@ -144,7 +144,7 @@ export function ChannelChart({ rows }: { rows: ChannelRow[] }) {
   const data = rows.map((row) => ({ channel: row.channel, ...row.cx }))
   return (
     <div className="chart" role="img" aria-label="Clustered bar chart of Client Experience scores by channel">
-      <ResponsiveContainer width="100%" height={210}>
+      <ResponsiveContainer width="100%" height={150}>
         <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -10 }} barCategoryGap="22%">
           <CartesianGrid vertical={false} stroke={GRID} />
           <XAxis dataKey="channel" tick={{ ...TICK, fill: INK }} tickLine={false} axisLine={{ stroke: GRID }} />

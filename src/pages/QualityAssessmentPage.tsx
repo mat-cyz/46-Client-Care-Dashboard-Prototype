@@ -24,8 +24,7 @@ function Footer({ data }: { data: DashboardData }) {
   const { meta } = data
   return (
     <footer className="footer">
-      <p><strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} (most recently completed business day)</p>
-      <p>Scheduled overnight load into curated gold-layer tables in Federated Data Platform (FDP); ingestion and reconciliation complete before 5:00 AM Eastern.</p>
+      <p><strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} (most recently completed business day). Scheduled overnight load into curated gold-layer tables in Federated Data Platform (FDP); ingestion and reconciliation complete before 5:00 AM Eastern.</p>
       <p>Sources: {meta.sources.join(', ')}. All values are aggregated mock data for demonstration only.</p>
     </footer>
   )
@@ -72,10 +71,10 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
             <KpiCard className="span-4" label="Average QA Score" value={fmtScore(summary.avgQa)} note={`Range 0-${QA_MAX}`} meter={{ value: summary.avgQa, max: QA_MAX }} />
             <KpiCard className="span-4" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" />
             <KpiCard className="span-4" label="Overall QA Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} />
-            <KpiCard className="span-3" label="Avg CX Resolution" value={fmtPct(cx('resolution'))} note="Range 0%-100%" meter={{ value: cx('resolution'), max: 100 }} />
-            <KpiCard className="span-3" label="Avg CX Discovery" value={fmtPct(cx('discovery'))} note="Range 0%-100%" meter={{ value: cx('discovery'), max: 100 }} />
-            <KpiCard className="span-3" label="Avg CX Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Range 0%-100%" meter={{ value: cx('processProcedure'), max: 100 }} />
-            <KpiCard className="span-3" label="Avg CX Communication" value={fmtPct(cx('communication'))} note="Range 0%-100%" meter={{ value: cx('communication'), max: 100 }} />
+            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} />
+            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} />
+            <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} />
+            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} />
             <KpiCard className="span-6 compact" label="QA Score Target" value={String(QA_TARGET)} note="Static target" />
             <KpiCard
               className="span-6 compact"
@@ -87,7 +86,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
           </section>
 
           <div className="chart-grid">
-            <Panel title="Average QA Score by Month" subtitle="All 12 months of 2026">
+            <Panel title="Average QA Score by Month" subtitle="All 12 months of each selected year">
               <TrendChart points={data.trend} />
             </Panel>
             <Panel title="Quality Distribution" subtitle="Share of evaluations by rating, per Client Experience category">
@@ -100,11 +99,10 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
               <ChannelChart rows={data.channels} />
               <ChannelTable rows={data.channels} />
             </Panel>
+            <Panel title="Advisor Coaching Opportunities" subtitle={`Lowest average QA first. At risk is below the target of ${QA_TARGET}; Watch is below the selection average.`} className="advisors">
+              <AdvisorTable rows={data.advisors} />
+            </Panel>
           </div>
-
-          <Panel title="Advisor Coaching Opportunities" subtitle={`Lowest average QA score first. At risk is below the target of ${QA_TARGET}; Watch is below the selection average.`} className="wide">
-            <AdvisorTable rows={data.advisors} />
-          </Panel>
         </>
       )}
 

@@ -66,13 +66,17 @@ function buildDashboardData(filters: Filters): DashboardData {
     return date !== null && filters.years.includes(date.slice(0, 4)) && filters.months.includes(MONTHS[Number(date.slice(5, 7)) - 1])
   })
 
-  const trend: TrendPoint[] = MONTHS.map((month, index) => {
-    const rows = dimensionRows.filter((r) => {
-      const date = basisDate(r, filters.dateBasis)
-      return date !== null && filters.years.includes(date.slice(0, 4)) && Number(date.slice(5, 7)) - 1 === index
-    })
-    return { month, avgQa: rows.length ? mean(rows.map((r) => r.qaScore)) : null, volume: rows.length, selected: filters.months.includes(month) }
-  })
+  const years = [...filters.years].sort()
+  const trend: TrendPoint[] = years.flatMap((year) =>
+    MONTHS.map((month, index) => {
+      const rows = dimensionRows.filter((r) => {
+        const date = basisDate(r, filters.dateBasis)
+        return date !== null && date.startsWith(year) && Number(date.slice(5, 7)) - 1 === index
+      })
+      const label = years.length > 1 ? `${month} '${year.slice(2)}` : month
+      return { label, avgQa: rows.length ? mean(rows.map((r) => r.qaScore)) : null, volume: rows.length, selected: filters.months.includes(month) }
+    }),
+  )
 
   const distribution: DistributionRow[] = DIMENSIONS.map((d) => {
     const row = { dimension: d.label, exceeds: 0, meets: 0, mostly: 0, partial: 0, opportunity: 0 }

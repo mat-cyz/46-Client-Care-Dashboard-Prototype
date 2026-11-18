@@ -2,7 +2,7 @@ export const TEAMS = ['Team Lead', 'QA', 'Self_Assessment', 'Calibration', 'Nest
 export const CHANNELS = ['Phone', 'Email', 'Chat'] as const
 export const STATUSES = ['Completed', 'Open', 'Disputed'] as const
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const
-export const YEARS = ['2026'] as const
+export const YEARS = ['2025', '2026'] as const
 
 export const QA_TARGET = 80
 export const QA_MAX = 135

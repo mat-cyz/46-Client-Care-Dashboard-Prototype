@@ -2,10 +2,16 @@ import { CHANNELS, MONTHS, RATINGS, STATUSES, TEAMS, YEARS } from './constants'
 import type { Channel, Rating, Status, Team } from './constants'
 import type { DatasetMeta, Filters, QualityAssessment } from '../types/dashboard'
 
-const DATA_START = '2026-01-01'
+const DATA_START = '2025-01-01'
 export const DATA_END = '2026-12-30'
 
-const ADVISORS = [
+interface Advisor {
+  name: string
+  manager: string
+  skill: number
+}
+
+const ADVISORS: Advisor[] = [
   { name: 'Amelie Laurent', manager: 'Elena Vasquez', skill: 0.45 },
   { name: 'Camille Rousseau', manager: 'Elena Vasquez', skill: 0.2 },
   { name: 'Juliette Marchand', manager: 'Elena Vasquez', skill: -0.15 },
@@ -18,7 +24,15 @@ const ADVISORS = [
   { name: 'Lucas Moreau', manager: 'Natalie Okafor', skill: 0.0 },
   { name: 'Isabelle Hart', manager: 'Natalie Okafor', skill: 0.35 },
   { name: 'Noah Fischer', manager: 'Natalie Okafor', skill: -0.55 },
+  { name: 'Tessa Aldridge', manager: 'Elena Vasquez', skill: 0.25 },
+  { name: 'Rafael Mendes', manager: 'Elena Vasquez', skill: -0.3 },
+  { name: 'Yuki Tanaka', manager: 'Gregory Hale', skill: 0.4 },
+  { name: 'Brianna Cole', manager: 'Gregory Hale', skill: -0.1 },
+  { name: 'Omar Haddad', manager: 'Natalie Okafor', skill: 0.15 },
+  { name: 'Chloe Winters', manager: 'Natalie Okafor', skill: -0.45 },
 ]
+
+const YEAR_SHIFT: Record<string, number> = { '2025': -0.15, '2026': 0 }
 
 const MONTH_SHIFT = [-0.05, 0, 0.05, 0.1, 0.1, 0.15, 0.1, -0.05, 0.05, 0.1, -0.05, 0.2]
 const MONTH_VOLUME = [0.9, 0.85, 0.95, 1, 1, 1, 0.95, 0.9, 1, 1.05, 1.2, 1.25]
@@ -68,13 +82,13 @@ function generateAssessments(): QualityAssessment[] {
     const month = Number(date.slice(5, 7)) - 1
     const weekday = new Date(`${date}T00:00:00Z`).getUTCDay()
     const weekend = weekday === 0 || weekday === 6
-    const count = Math.round((weekend ? 6 : 13) * MONTH_VOLUME[month] + rand() * 4)
+    const count = Math.round(((weekend ? 6 : 13) * MONTH_VOLUME[month] * ADVISORS.length) / 12 + rand() * 4)
 
     for (let i = 0; i < count; i++) {
       const advisor = ADVISORS[Math.floor(rand() * ADVISORS.length)]
       const team = pickWeighted(TEAM_WEIGHT)
       const channel = pickWeighted(CHANNEL_WEIGHT)
-      const level = advisor.skill + MONTH_SHIFT[month] + TEAM_SHIFT[team] + CHANNEL_SHIFT[channel]
+      const level = advisor.skill + YEAR_SHIFT[date.slice(0, 4)] + MONTH_SHIFT[month] + TEAM_SHIFT[team] + CHANNEL_SHIFT[channel]
       const shared = gauss() * 0.5
       const rate = (bias: number) => toRating(level + bias + shared + gauss() * 0.85)
 
