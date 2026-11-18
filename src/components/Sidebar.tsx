@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, ClipboardCheck, LayoutDashboard, MessageSquareText, Star, TableProperties, Users } from 'lucide-react'
+import { BookOpen, Briefcase, ClipboardCheck, FileText, Gauge, LayoutDashboard, MessageSquareText, Star, Store, TableProperties, TrendingUp, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 interface NavEntry {
@@ -12,11 +12,16 @@ interface NavEntry {
 
 const NAVIGATION: NavEntry[] = [
   { id: 'executive-overview', label: 'Executive Overview', icon: LayoutDashboard, scope: 'headline Client Care KPIs for leadership.' },
-  { id: 'advisor-performance', label: 'Advisor Performance', icon: Users, scope: 'advisor scorecards, coaching history, and productivity trends.' },
+  { id: 'advisor-scorecard', label: 'Advisor Scorecard', icon: Users, scope: 'advisor scorecards, coaching history, and productivity trends.' },
   { id: 'voice-of-customer', label: 'Voice of Customer', icon: MessageSquareText, scope: 'survey and sentiment trends.' },
   { id: 'voice-details', label: 'Voice Details', icon: TableProperties, scope: 'verbatim feedback with case-level drill-through.' },
   { id: 'quality-assessment', label: 'Quality Assessment', icon: ClipboardCheck, active: true },
   { id: 'product-reviews', label: 'Product Reviews', icon: Star, scope: 'review volume, rating trends, and sentiment by product.' },
+  { id: 'case-management', label: 'Case Management', icon: Briefcase, scope: 'case volume, backlog, and resolution times.' },
+  { id: 'sales-influence', label: 'Sales Influence', icon: TrendingUp, scope: 'client care impact on sales and conversion.' },
+  { id: 'boutique-collaboration', label: 'Boutique Collaboration', icon: Store, scope: 'client care and boutique handoffs and follow-ups.' },
+  { id: 'operational-performance', label: 'Operational Performance', icon: Gauge, scope: 'service levels, handle times, and staffing.' },
+  { id: 'knowledge-docs', label: 'Knowledge & Docs', icon: FileText, scope: 'knowledge articles, usage, and documentation gaps.' },
   { id: 'glossary', label: 'Glossary', icon: BookOpen, scope: 'KPI definitions, data sources, and refresh rules.' },
 ]
 
@@ -78,7 +83,7 @@ export function Sidebar() {
       <div className="wordmark">
         <ChanelLogo />
         <span className="wordmark-logo">CHANEL</span>
-        <small>CLIENT CARE DASHBOARD</small>
+        <small>CLIENT CARE SERVICE EXCELLENCE DASHBOARD</small>
       </div>
       <nav aria-label="Primary navigation">
         {NAVIGATION.map((entry) => {

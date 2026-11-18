@@ -19,8 +19,8 @@ export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
             <th scope="col">Advisor</th>
             <th scope="col" className="num">Evals</th>
             <th scope="col" className="num">Avg QA</th>
-            <th scope="col" className="num">Pass rate</th>
-            <th scope="col">Lowest CX area</th>
+            <th scope="col" className="num">Pass Rate</th>
+            <th scope="col">Lowest CX Category</th>
             <th scope="col">Coaching</th>
           </tr>
         </thead>
@@ -51,8 +51,8 @@ export function ChannelTable({ rows }: { rows: ChannelRow[] }) {
             <th scope="col">Channel</th>
             <th scope="col" className="num">Evals</th>
             <th scope="col" className="num">Avg QA</th>
-            <th scope="col" className="num">Vs target</th>
-            <th scope="col" className="num">Pass rate</th>
+            <th scope="col" className="num">Vs Target</th>
+            <th scope="col" className="num">Pass Rate</th>
           </tr>
         </thead>
         <tbody>
