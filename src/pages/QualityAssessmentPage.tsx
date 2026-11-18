@@ -71,21 +71,22 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
       ) : (
         <>
           <section className="kpi-grid" aria-label="Executive KPIs">
-            <KpiCard className="span-4" label="Average QA Score" value={fmtScore(summary.avgQa)} note={`Range 0-${QA_MAX}`} meter={{ value: summary.avgQa, max: QA_MAX }} />
-            <KpiCard className="span-4" label="QA Score Target" value={String(QA_TARGET)} note="Benchmark target" />
+            <KpiCard className="span-4" label="Average QA Score" value={fmtScore(summary.avgQa)} note={`Range 0-${QA_MAX}`} meter={{ value: summary.avgQa, max: QA_MAX }} question="How well are advisors performing against our quality standards overall?" />
+            <KpiCard className="span-4" label="QA Score Target" value={String(QA_TARGET)} note="Benchmark target" question="What quality score benchmark are we aiming to meet?" />
             <KpiCard
               className="span-4"
-              label="Variance to QA Target"
+              label="Variance to Target"
               value={fmtSigned(variance)}
               note={variance >= 0 ? 'Above target' : 'Below target'}
               tone={variance >= 0 ? 'positive' : 'negative'}
+              question="Are we ahead of or behind our quality target, and by how much?"
             />
-            <KpiCard className="span-6" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" />
-            <KpiCard className="span-6" label="Overall QA Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} />
-            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} />
-            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} />
-            <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} />
-            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} />
+            <KpiCard className="span-6" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" question="How many interactions were evaluated, and is the sample large enough to trust?" />
+            <KpiCard className="span-6" label="Overall Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} question="What share of evaluated interactions meet our service standards?" />
+            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} question="Are advisors fully resolving what clients came to us for?" />
+            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} question="Are advisors asking the right questions to understand each client's need?" />
+            <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} question="Are advisors following the required processes and procedures?" />
+            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} question="Are advisors communicating clearly and with the right tone?" />
           </section>
 
           <div className="chart-grid">

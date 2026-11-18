@@ -359,13 +359,14 @@
 .span-6 { grid-column: span 6; }
 
 .kpi-card {
+  position: relative;
   display: grid;
   gap: 4px;
   align-content: start;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-top: 3px solid var(--ink);
-  background: var(--white);
+  background: #f3f1ec;
 }
 
 .kpi-card h3 {
@@ -386,6 +387,56 @@
   line-height: 1.1;
 }
 
+.kpi-info-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: help;
+}
+
+.kpi-info-button:hover {
+  color: var(--ink);
+}
+
+.kpi-tooltip {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  min-width: 170px;
+  padding: 8px 10px;
+  border: 1px solid var(--ink);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.35;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  display: none;
+}
+
+.kpi-tooltip.visible {
+  display: block;
+}
+
+.kpi-tooltip strong {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .kpi-value.positive { color: var(--blue); }
 .kpi-value.negative { color: var(--coral-dark); }
 
@@ -395,8 +446,8 @@
 }
 
 .meter {
-  height: 4px;
-  background: #ececec;
+  height: 5px;
+  background: #bfb9ad;
 }
 
 .meter span {
@@ -695,6 +746,18 @@ tbody th {
     grid-column: span 1;
     gap: 2px;
     padding: 7px 10px;
+  }
+
+  .kpi-card h3 {
+    padding-right: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .kpi-info-button {
+    top: 3px;
+    right: 3px;
+    width: 16px;
+    height: 16px;
   }
 
   .kpi-value {
