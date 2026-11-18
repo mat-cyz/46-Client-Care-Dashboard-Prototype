@@ -1,0 +1,49 @@
+:root {
+  --ink: #070f25;
+  --navy: #0f1934;
+  --coral: #fd625e;
+  --coral-dark: #bb4a4a;
+  --blue: #003bff;
+  --muted: #5f6b6d;
+  --line: #e3e3e3;
+  --page: #f2f2f2;
+  --white: #ffffff;
+  --font-label: 'ABChanel Corpo Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--page);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--page);
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+button, select, input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

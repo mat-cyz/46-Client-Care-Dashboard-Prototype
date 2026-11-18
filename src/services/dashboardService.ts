@@ -1,0 +1,129 @@
+import { DIMENSIONS, MONTHS, QA_TARGET, RATINGS } from '../data/constants'
+import type { DimensionKey, Rating } from '../data/constants'
+import { assessments, datasetMeta } from '../data/mockData'
+import type {
+  AdvisorRow,
+  ChannelRow,
+  DashboardData,
+  DimensionScores,
+  DistributionRow,
+  Filters,
+  QualityAssessment,
+  Summary,
+  TeamRow,
+  TrendPoint,
+} from '../types/dashboard'
+
+export interface DashboardDataAdapter {
+  getDashboardData(filters: Filters, signal?: AbortSignal): Promise<DashboardData>
+}
+
+const ratingPct = Object.fromEntries(RATINGS.map((r) => [r.key, r.pct])) as Record<Rating, number>
+
+const mean = (values: number[]) => (values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0)
+
+function summarize(rows: QualityAssessment[]): Summary {
+  const cx = Object.fromEntries(
+    DIMENSIONS.map((d) => [d.key, mean(rows.map((r) => ratingPct[r[d.key]]))]),
+  ) as DimensionScores
+  return {
+    volume: rows.length,
+    avgQa: mean(rows.map((r) => r.qaScore)),
+    passRate: rows.length ? (rows.filter((r) => r.overallPass === 'Yes').length / rows.length) * 100 : 0,
+    cx,
+  }
+}
+
+function groupBy<T extends string>(rows: QualityAssessment[], key: (r: QualityAssessment) => T) {
+  const groups = new Map<T, QualityAssessment[]>()
+  for (const row of rows) {
+    const k = key(row)
+    const bucket = groups.get(k)
+    if (bucket) bucket.push(row)
+    else groups.set(k, [row])
+  }
+  return groups
+}
+
+const basisDate = (r: QualityAssessment, basis: Filters['dateBasis']) => (basis === 'created' ? r.createdDate : r.completedDate)
+
+// Applies every filter except the period so the trend can show all 12 months.
+function matchesDimensions(r: QualityAssessment, f: Filters) {
+  return f.teams.includes(r.team) && f.channels.includes(r.channel) && f.statuses.includes(r.status) && f.advisors.includes(r.advisor)
+}
+
+function selectionLabel(f: Filters) {
+  const months = f.months.length === MONTHS.length ? 'All months' : f.months.length > 3 ? `${f.months.length} months` : f.months.join(', ')
+  const years = f.years.join(', ')
+  return `${months || 'No months'} ${years}`.trim()
+}
+
+function buildDashboardData(filters: Filters): DashboardData {
+  const dimensionRows = assessments.filter((r) => matchesDimensions(r, filters))
+
+  const inPeriod = dimensionRows.filter((r) => {
+    const date = basisDate(r, filters.dateBasis)
+    return date !== null && filters.years.includes(date.slice(0, 4)) && filters.months.includes(MONTHS[Number(date.slice(5, 7)) - 1])
+  })
+
+  const trend: TrendPoint[] = MONTHS.map((month, index) => {
+    const rows = dimensionRows.filter((r) => {
+      const date = basisDate(r, filters.dateBasis)
+      return date !== null && filters.years.includes(date.slice(0, 4)) && Number(date.slice(5, 7)) - 1 === index
+    })
+    return { month, avgQa: rows.length ? mean(rows.map((r) => r.qaScore)) : null, volume: rows.length, selected: filters.months.includes(month) }
+  })
+
+  const distribution: DistributionRow[] = DIMENSIONS.map((d) => {
+    const row = { dimension: d.label, exceeds: 0, meets: 0, mostly: 0, partial: 0, opportunity: 0 }
+    for (const r of inPeriod) row[r[d.key as DimensionKey]] += 1
+    if (inPeriod.length) for (const rating of RATINGS) row[rating.key] = (row[rating.key] / inPeriod.length) * 100
+    return row
+  })
+
+  const teams: TeamRow[] = [...groupBy(inPeriod, (r) => r.team)]
+    .map(([team, rows]) => ({ team, rank: 0, ...summarize(rows) }))
+    .sort((a, b) => b.avgQa - a.avgQa)
+    .map((row, index) => ({ ...row, rank: index + 1 }))
+
+  const channels: ChannelRow[] = ['Phone', 'Email', 'Chat']
+    .map((channel) => ({ channel, ...summarize(inPeriod.filter((r) => r.channel === channel)) }))
+
+  const summary = summarize(inPeriod)
+
+  const advisors: AdvisorRow[] = [...groupBy(inPeriod, (r) => r.advisor)]
+    .map(([advisor, rows]) => {
+      const s = summarize(rows)
+      const lowest = DIMENSIONS.map((d) => ({ label: d.label, score: s.cx[d.key] })).reduce((a, b) => (b.score < a.score ? b : a))
+      const flag: AdvisorRow['flag'] = s.avgQa < QA_TARGET ? 'At risk' : s.avgQa < summary.avgQa ? 'Watch' : 'On track'
+      return { advisor, manager: rows[0].manager, lowestDimension: lowest, flag, ...s }
+    })
+    .sort((a, b) => a.avgQa - b.avgQa)
+
+  return { summary, trend, distribution, teams, channels, advisors, selectionLabel: selectionLabel(filters), meta: datasetMeta }
+}
+
+function delay(ms: number, signal?: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) return reject(new DOMException('Aborted', 'AbortError'))
+    const timer = setTimeout(resolve, ms)
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer)
+        reject(new DOMException('Aborted', 'AbortError'))
+      },
+      { once: true },
+    )
+  })
+}
+
+// Swap for an FDP gold-layer API or Power BI semantic-model adapter without touching the UI.
+export class MockDashboardAdapter implements DashboardDataAdapter {
+  async getDashboardData(filters: Filters, signal?: AbortSignal) {
+    await delay(150, signal)
+    return buildDashboardData(filters)
+  }
+}
+
+export const dashboardDataAdapter: DashboardDataAdapter = new MockDashboardAdapter()
