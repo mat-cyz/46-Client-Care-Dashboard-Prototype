@@ -1,6 +1,6 @@
 import { DIMENSIONS, MONTHS, QA_TARGET, RATINGS } from '../data/constants'
 import type { DimensionKey, Rating } from '../data/constants'
-import { assessments, datasetMeta } from '../data/mockData'
+import { assessments, DATA_END, DATA_START, datasetMeta } from '../data/mockData'
 import type {
   AdvisorRow,
   ChannelRow,
@@ -47,7 +47,7 @@ function groupBy<T extends string>(rows: QualityAssessment[], key: (r: QualityAs
 
 const basisDate = (r: QualityAssessment, basis: Filters['dateBasis']) => (basis === 'created' ? r.createdDate : r.completedDate)
 
-// Applies every filter except the period so the trend can show all 12 months.
+// Applies every filter except the period so the trend can show every month of the selected years.
 function matchesDimensions(r: QualityAssessment, f: Filters) {
   return f.teams.includes(r.team) && f.channels.includes(r.channel) && f.statuses.includes(r.status) && f.advisors.includes(r.advisor)
 }
@@ -66,17 +66,18 @@ function buildDashboardData(filters: Filters): DashboardData {
     return date !== null && filters.years.includes(date.slice(0, 4)) && filters.months.includes(MONTHS[Number(date.slice(5, 7)) - 1])
   })
 
-  const years = [...filters.years].sort()
-  const trend: TrendPoint[] = years.flatMap((year) =>
-    MONTHS.map((month, index) => {
-      const rows = dimensionRows.filter((r) => {
-        const date = basisDate(r, filters.dateBasis)
-        return date !== null && date.startsWith(year) && Number(date.slice(5, 7)) - 1 === index
-      })
-      const label = years.length > 1 ? `${month} '${year.slice(2)}` : month
-      return { label, avgQa: rows.length ? mean(rows.map((r) => r.qaScore)) : null, volume: rows.length, selected: filters.months.includes(month) }
-    }),
-  )
+  const firstKey = DATA_START.slice(0, 7)
+  const lastKey = DATA_END.slice(0, 7)
+  const trend: TrendPoint[] = MONTHS.flatMap((month, monthIndex) => {
+    const mm = String(monthIndex + 1).padStart(2, '0')
+    const hasData = filters.years.some((year) => `${year}-${mm}` >= firstKey && `${year}-${mm}` <= lastKey)
+    if (!hasData) return []
+    const rows = dimensionRows.filter((r) => {
+      const date = basisDate(r, filters.dateBasis)
+      return date !== null && filters.years.includes(date.slice(0, 4)) && date.slice(5, 7) === mm
+    })
+    return [{ label: month, avgQa: rows.length ? mean(rows.map((r) => r.qaScore)) : null, volume: rows.length, selected: filters.months.includes(month) }]
+  })
 
   const distribution: DistributionRow[] = DIMENSIONS.map((d) => {
     const row = { dimension: d.label, exceeds: 0, meets: 0, mostly: 0, partial: 0, opportunity: 0 }

@@ -1,5 +1,5 @@
 # Chanel Client Care Dashboard - Project Brief
-I want to create an executive-facing React and TypeScript prototype for prior-day Client Care operations at Chanel encompassing 12 months of fake data. All values are aggregated December 2026 mock data for demonstration only.
+I want to create an executive-facing React and TypeScript prototype for prior-day Client Care operations at Chanel encompassing 24 months of fake data. All values are aggregated November 2026 mock data for demonstration only.
 
 Dashboard should have a navigation pane on the left side with Quality Assessment section active and Product Reviews section **PLANNED** for Phase 2. **Planned** are non-interactive (greyed-out) and have keyboard-accessible release guidance.
 
@@ -96,7 +96,7 @@ Below is json file with brand styling:
 
 
 ## Refresh data cycle
-Footer with last refreshed date. The intended production cadence is a scheduled overnight load into curated gold-layer tables in Federated Data Platform (FDP). Source ingestion and reconciliation should complete before 5:00 AM Eastern; the dashboard then publishes the most recently completed business day. Data sources come from Salesforce, Genesys, Medallia, Emplify, PFS Web Sales, Product data.
+Footer with last refreshed date. The intended production cadence is a scheduled overnight load into curated gold-layer tables in Federated Data Platform (FDP). Source ingestion and reconciliation should complete before 5:00 AM Eastern; the dashboard then publishes the most recently completed business day. Data sources come from Salesforce, Genesys, Medallia, Emplifi, PFS Web Sales, Product data.
 
 ## Existing prototype website to refer
 Reference the entire project based on the Lucas Museum Dashboard prototype with the link to github below:

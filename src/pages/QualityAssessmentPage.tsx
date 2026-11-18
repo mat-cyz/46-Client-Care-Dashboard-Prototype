@@ -24,8 +24,9 @@ function Footer({ data }: { data: DashboardData }) {
   const { meta } = data
   return (
     <footer className="footer">
-      <p><strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} (most recently completed business day). Scheduled overnight load into curated gold-layer tables in Federated Data Platform (FDP); ingestion and reconciliation complete before 5:00 AM Eastern.</p>
-      <p>Sources: {meta.sources.join(', ')}. All values are aggregated mock data for demonstration only.</p>
+      <p>
+        <strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} &middot; Federated Data Platform (FDP) load completes before 5:00 AM Eastern &middot; <strong>Sources:</strong> {meta.sources.join(', ')}
+      </p>
     </footer>
   )
 }
@@ -48,7 +49,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
   const cx = (key: (typeof DIMENSIONS)[number]['key']) => summary.cx[key]
 
   return (
-    <div aria-busy={state === 'loading'} className={state === 'loading' ? 'is-loading' : ''}>
+    <div aria-busy={state === 'loading'} className={`page ${state === 'loading' ? 'is-loading' : ''}`}>
       <div className="page-header">
         <div>
           <h1>Quality Assessment Reporting</h1>
@@ -86,7 +87,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
           </section>
 
           <div className="chart-grid">
-            <Panel title="Average QA Score by Month" subtitle="All 12 months of each selected year">
+            <Panel title="Average QA Score by Month" subtitle="Months with data in the selected year(s)">
               <TrendChart points={data.trend} />
             </Panel>
             <Panel title="Quality Distribution" subtitle="Share of evaluations by rating, per Client Experience category">

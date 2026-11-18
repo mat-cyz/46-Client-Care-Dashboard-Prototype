@@ -2,8 +2,8 @@ import { CHANNELS, MONTHS, RATINGS, STATUSES, TEAMS, YEARS } from './constants'
 import type { Channel, Rating, Status, Team } from './constants'
 import type { DatasetMeta, Filters, QualityAssessment } from '../types/dashboard'
 
-const DATA_START = '2025-01-01'
-export const DATA_END = '2026-12-30'
+export const DATA_START = '2024-12-01'
+export const DATA_END = '2026-11-30'
 
 interface Advisor {
   name: string
@@ -32,7 +32,7 @@ const ADVISORS: Advisor[] = [
   { name: 'Chloe Winters', manager: 'Natalie Okafor', skill: -0.45 },
 ]
 
-const YEAR_SHIFT: Record<string, number> = { '2025': -0.15, '2026': 0 }
+const YEAR_SHIFT: Record<string, number> = { '2024': -0.25, '2025': -0.15, '2026': 0 }
 
 const MONTH_SHIFT = [-0.05, 0, 0.05, 0.1, 0.1, 0.15, 0.1, -0.05, 0.05, 0.1, -0.05, 0.2]
 const MONTH_VOLUME = [0.9, 0.85, 0.95, 1, 1, 1, 0.95, 0.9, 1, 1.05, 1.2, 1.25]
@@ -143,7 +143,7 @@ export const filterOptions = {
 export const defaultFilters: Filters = {
   dateBasis: 'created',
   years: ['2026'],
-  months: ['Dec'],
+  months: ['Nov'],
   teams: [...filterOptions.teams],
   channels: [...filterOptions.channels],
   statuses: [...filterOptions.statuses],
@@ -151,7 +151,7 @@ export const defaultFilters: Filters = {
 }
 
 export const datasetMeta: DatasetMeta = {
-  lastRefreshed: '2026-12-31T04:42:00-05:00',
+  lastRefreshed: '2026-12-01T05:52:00-05:00',
   dataThrough: DATA_END,
-  sources: ['Salesforce', 'Genesys', 'Medallia', 'Emplify', 'PFS Web Sales', 'Product data'],
+  sources: ['Salesforce', 'Genesys', 'Medallia', 'Emplifi', 'PFS Web Sales', 'Product data'],
 }
