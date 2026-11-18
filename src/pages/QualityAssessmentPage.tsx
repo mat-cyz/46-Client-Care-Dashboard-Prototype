@@ -53,7 +53,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
       <div className="page-header">
         <div>
           <h1>Quality Assessment Reporting</h1>
-          <p>Prior-day Client Care operations &middot; {selectionLabel}</p>
+          <p>Provides a high-level view of overall Client Care quality performance &middot; {selectionLabel}</p>
         </div>
         <span className="badge">Mock data</span>
       </div>
