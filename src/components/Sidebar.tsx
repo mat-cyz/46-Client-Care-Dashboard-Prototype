@@ -25,11 +25,22 @@ const NAVIGATION: NavEntry[] = [
   { id: 'glossary', label: 'Glossary', icon: BookOpen, scope: 'KPI definitions, data sources, and refresh rules.' },
 ]
 
-// Logo lives at public/Chanel Logo.png; the sidebar hides it if the file is missing.
+// Logo lives at public/CC Logo_F&B.jpg; the sidebar hides it if the file is missing.
 function ChanelLogo() {
   const [missing, setMissing] = useState(false)
   if (missing) return null
-  return <img className="chanel-mark" src={`${import.meta.env.BASE_URL}Chanel%20Logo.png`} alt="" onError={() => setMissing(true)} />
+  return <img className="chanel-mark" src={`${import.meta.env.BASE_URL}CC%20Logo_F&B.jpg`} alt="" onError={() => setMissing(true)} />
+}
+
+// Badge lives at public/IT_BI_CERTIFIED_LOGO.png; hidden if the file is missing.
+function CertifiedBadge() {
+  const [missing, setMissing] = useState(false)
+  if (missing) return null
+  return (
+    <span className="certified-badge" role="img" aria-label="IT BI Certified">
+      <img src={`${import.meta.env.BASE_URL}IT_BI_CERTIFIED_LOGO.png`} alt="" onError={() => setMissing(true)} />
+    </span>
+  )
 }
 
 function PlannedItem({ entry }: { entry: NavEntry }) {
@@ -82,8 +93,10 @@ export function Sidebar() {
     <aside className="sidebar">
       <div className="wordmark">
         <ChanelLogo />
+        <CertifiedBadge />
         <span className="wordmark-logo">CHANEL</span>
         <small>CLIENT CARE SERVICE EXCELLENCE DASHBOARD</small>
+        <small className="wordmark-notice">CONFIDENTIAL / INTERNAL USE ONLY</small>
       </div>
       <nav aria-label="Primary navigation">
         {NAVIGATION.map((entry) => {

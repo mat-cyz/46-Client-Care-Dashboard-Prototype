@@ -3,6 +3,7 @@ import { DIMENSIONS, QA_MAX, QA_TARGET } from '../data/constants'
 import type { DashboardData } from '../types/dashboard'
 import { fmtDate, fmtInt, fmtPct, fmtRefreshed, fmtScore, fmtSigned } from '../utils/format'
 import { ChannelChart, DistributionChart, TeamRankChart, TrendChart } from '../components/Charts'
+import { Definitions } from '../components/Definitions'
 import { KpiCard } from '../components/KpiCard'
 import { AdvisorTable, ChannelTable } from '../components/Tables'
 
@@ -27,6 +28,7 @@ function Footer({ data }: { data: DashboardData }) {
       <p>
         <strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} &middot; Federated Data Platform (FDP) load completes before 5:00 AM Eastern &middot; <strong>Sources:</strong> {meta.sources.join(', ')}
       </p>
+      <Definitions />
     </footer>
   )
 }
@@ -70,20 +72,20 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
         <>
           <section className="kpi-grid" aria-label="Executive KPIs">
             <KpiCard className="span-4" label="Average QA Score" value={fmtScore(summary.avgQa)} note={`Range 0-${QA_MAX}`} meter={{ value: summary.avgQa, max: QA_MAX }} />
-            <KpiCard className="span-4" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" />
-            <KpiCard className="span-4" label="Overall QA Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} />
-            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} />
-            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} />
-            <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} />
-            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} />
-            <KpiCard className="span-6 compact" label="QA Score Target" value={String(QA_TARGET)} note="Static target" />
+            <KpiCard className="span-4" label="QA Score Target" value={String(QA_TARGET)} note="Benchmark target" />
             <KpiCard
-              className="span-6 compact"
+              className="span-4"
               label="Variance to QA Target"
               value={fmtSigned(variance)}
               note={variance >= 0 ? 'Above target' : 'Below target'}
               tone={variance >= 0 ? 'positive' : 'negative'}
             />
+            <KpiCard className="span-6" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" />
+            <KpiCard className="span-6" label="Overall QA Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} />
+            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} />
+            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} />
+            <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} />
+            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} />
           </section>
 
           <div className="chart-grid">
