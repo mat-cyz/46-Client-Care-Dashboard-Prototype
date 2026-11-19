@@ -44,10 +44,10 @@ const DIMENSION_BIAS = { resolution: 0.1, discovery: -0.15, processProcedure: -0
 
 const DAY_MS = 86_400_000
 const toMs = (date: string) => Date.parse(`${date}T00:00:00Z`)
-const addDays = (date: string, days: number) => new Date(toMs(date) + days * DAY_MS).toISOString().slice(0, 10)
-const daysBetween = (from: string, to: string) => Math.round((toMs(to) - toMs(from)) / DAY_MS)
+export const addDays = (date: string, days: number) => new Date(toMs(date) + days * DAY_MS).toISOString().slice(0, 10)
+export const daysBetween = (from: string, to: string) => Math.round((toMs(to) - toMs(from)) / DAY_MS)
 
-function mulberry32(seed: number) {
+export function mulberry32(seed: number) {
   let state = seed
   return () => {
     state = (state + 0x6d2b79f5) | 0
@@ -94,7 +94,9 @@ function generateAssessments(): QualityAssessment[] {
 
       const resolution = rate(DIMENSION_BIAS.resolution)
       const discovery = rate(DIMENSION_BIAS.discovery)
-      const processProcedure = rate(DIMENSION_BIAS.processProcedure)
+      // Process & Procedure has no Exceeds Expectations option, so it tops out at 100%.
+      const rawProcessProcedure = rate(DIMENSION_BIAS.processProcedure)
+      const processProcedure: Rating = rawProcessProcedure === 'exceeds' ? 'meets' : rawProcessProcedure
       const communication = rate(DIMENSION_BIAS.communication)
       const qaScore = ratingPoints[resolution] + ratingPoints[discovery] + ratingPoints[processProcedure] + ratingPoints[communication]
 

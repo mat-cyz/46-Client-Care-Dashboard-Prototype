@@ -11,16 +11,16 @@ export const QA_MAX = 135
 export const RATINGS = [
   { key: 'exceeds', label: 'Exceeds Expectations', pct: 120, points: 33.75, color: '#003BFF', textColor: '#FFFFFF' },
   { key: 'meets', label: '100% - Meeting All Expectations', pct: 100, points: 25, color: '#8AD4EB', textColor: '#070F25' },
-  { key: 'mostly', label: '80% - Mostly Meeting Expectations', pct: 80, points: 20, color: '#F4D25A', textColor: '#070F25' },
+  { key: 'mostly', label: '80% - Mostly Meeting Expectations', pct: 80, points: 20, color: '#B887AD', textColor: '#070F25' },
   { key: 'partial', label: '60% - Partially Meets Expectations', pct: 60, points: 15, color: '#FD625E', textColor: '#070F25' },
   { key: 'opportunity', label: '0% - Opportunity to Improve', pct: 0, points: 0, color: '#000000', textColor: '#FFFFFF' },
 ] as const
 
 export const DIMENSIONS = [
-  { key: 'resolution', label: 'Resolution', color: '#0F1934' },
-  { key: 'discovery', label: 'Discovery', color: '#8AD4EB' },
-  { key: 'processProcedure', label: 'Process & Procedure', color: '#B887AD' },
-  { key: 'communication', label: 'Communication', color: '#FD625E' },
+  { key: 'resolution', label: 'Resolution', color: '#0F1934', maxPct: 120 },
+  { key: 'discovery', label: 'Discovery', color: '#8AD4EB', maxPct: 120 },
+  { key: 'processProcedure', label: 'Process & Procedure', color: '#B887AD', maxPct: 100 },
+  { key: 'communication', label: 'Communication', color: '#FD625E', maxPct: 120 },
 ] as const
 
 export type Team = (typeof TEAMS)[number]

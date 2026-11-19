@@ -19,10 +19,12 @@ Use `npm run build` for a production build.
 - `src/services/dashboardService.ts` provides the `DashboardDataAdapter` boundary. `MockDashboardAdapter` can be replaced by an FDP gold-layer API or Power BI semantic-model adapter without changing the UI.
 - `src/components` contains the sidebar, filter bar, KPI cards, charts, and tables.
 - `src/pages/QualityAssessmentPage.tsx` composes the KPI, trend, distribution, team ranking, channel, and advisor sections plus the refresh footer.
+- `src/pages/CaseManagementPage.tsx` is the Case Management page (hash route `#case-management`): five KPIs, case volume by reason, a Week/Month resolution trend, an operational risk bubble matrix, open workload by team or boutique, and case aging. It is backed by `src/data/caseData.ts` (mock Salesforce Case records), `src/services/caseService.ts`, and `src/types/cases.ts`.
+- `src/views` hold each page's filters and data loading; `src/App.tsx` switches pages from the URL hash and the sidebar.
 
 ## Behavior notes
 
-- Filters: date basis (Created or Completed), year, month, team, channel, status, and advisor. Open assessments have no completed date and drop out under the Completed Date basis.
+- Filters: year, month, team, channel, status, and advisor, all based on the assessment Created Date.
 - The trend line follows the Year filter and ignores the Month filter, so each selected year shows its months with data (for example, 2026 shows Jan-Nov); selected months are highlighted. With several years selected, each month combines them.
 - QA score ranges 0-135: each of the four Client Experience dimensions is worth up to 33.75 points (Exceeds Expectations scores above the 25-point base). In the CX score averages, Exceeds Expectations is weighted 120 and the other ratings 100, 80, 60, and 0, so an average can exceed 100%.
 - Overall QA pass is "Yes" when the QA score is at least 80 and Resolution is not rated "0% - Opportunity to Improve".

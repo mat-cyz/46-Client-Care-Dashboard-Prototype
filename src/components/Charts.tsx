@@ -28,7 +28,7 @@ const TOOLTIP_STYLE = { border: `1px solid ${GRID}`, borderRadius: 0, fontSize: 
 const asNumber = (value: unknown) => (typeof value === 'number' ? value : Number(value))
 
 // Fixed height by default; fills the panel on the wide canvas (see .chart-plot in App.css).
-function Plot({ height, children }: { height: number; children: ReactElement }) {
+export function Plot({ height, children }: { height: number; children: ReactElement }) {
   return (
     <div className="chart-plot" style={{ '--plot-h': `${height}px` } as CSSProperties}>
       <div className="chart-plot-inner">
@@ -160,7 +160,7 @@ export function ChannelChart({ rows }: { rows: ChannelRow[] }) {
         <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -10 }} barCategoryGap="22%">
           <CartesianGrid vertical={false} stroke={GRID} />
           <XAxis dataKey="channel" tick={{ ...TICK, fill: INK }} tickLine={false} axisLine={{ stroke: GRID }} />
-          <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickFormatter={(v: number) => `${v}%`} tick={TICK} tickLine={false} axisLine={false} width={44} />
+          <YAxis domain={[0, 120]} ticks={[0, 30, 60, 90, 120]} tickFormatter={(v: number) => `${v}%`} tick={TICK} tickLine={false} axisLine={false} width={44} />
           <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(0,0,0,0.04)' }} formatter={(value, name) => [fmtPct(asNumber(value)), String(name)]} />
           <Legend iconType="square" wrapperStyle={{ fontSize: 12 }} />
           {DIMENSIONS.map((d) => (

@@ -1,5 +1,11 @@
 import { useId, useState } from 'react'
-import { ArrowDown, ArrowUp, Info } from 'lucide-react'
+import { ArrowDown, ArrowUp, Info, Minus } from 'lucide-react'
+
+export interface KpiComparison {
+  label: string
+  value: string
+  change: { text: string; direction: 'up' | 'down' | 'flat'; tone: 'good' | 'bad' | 'neutral' } | null
+}
 
 interface KpiCardProps {
   label: string
@@ -9,9 +15,13 @@ interface KpiCardProps {
   className?: string
   meter?: { value: number; max: number }
   tone?: 'positive' | 'negative'
+  comparison?: KpiComparison
 }
 
-export function KpiCard({ label, value, note, question, className = '', meter, tone }: KpiCardProps) {
+const DIRECTION_ICON = { up: ArrowUp, down: ArrowDown, flat: Minus }
+const DIRECTION_LABEL = { up: 'Up', down: 'Down', flat: 'No change' }
+
+export function KpiCard({ label, value, note, question, className = '', meter, tone, comparison }: KpiCardProps) {
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const [dismissed, setDismissed] = useState(false)
@@ -46,11 +56,22 @@ export function KpiCard({ label, value, note, question, className = '', meter, t
         <strong>Business question</strong>
         {question}
       </div>
-      <p className={`kpi-value ${tone ?? ''}`}>
-        {tone === 'positive' && <ArrowUp size={20} aria-label="Above target" />}
-        {tone === 'negative' && <ArrowDown size={20} aria-label="Below target" />}
-        {value}
-      </p>
+      <div className="kpi-main">
+        <p className={`kpi-value ${tone ?? ''}`}>
+          {tone === 'positive' && <ArrowUp size={20} aria-label="Above target" />}
+          {tone === 'negative' && <ArrowDown size={20} aria-label="Below target" />}
+          {value}
+        </p>
+        {comparison && (
+          <div className="kpi-compare">
+            <span className="kpi-sply">
+              <small>{comparison.label}</small>
+              <b>{comparison.value}</b>
+            </span>
+            {comparison.change && <VarianceChip change={comparison.change} />}
+          </div>
+        )}
+      </div>
       {meter && (
         <div className="meter" aria-hidden="true">
           <span style={{ width: `${Math.min(100, Math.max(0, (meter.value / meter.max) * 100))}%` }} />
@@ -58,5 +79,16 @@ export function KpiCard({ label, value, note, question, className = '', meter, t
       )}
       <small>{note}</small>
     </article>
+  )
+}
+
+function VarianceChip({ change }: { change: NonNullable<KpiComparison['change']> }) {
+  const Icon = DIRECTION_ICON[change.direction]
+  return (
+    <span className={`kpi-variance ${change.tone}`}>
+      <Icon size={12} aria-hidden="true" />
+      <span className="sr-only">{DIRECTION_LABEL[change.direction]} </span>
+      {change.text}
+    </span>
   )
 }

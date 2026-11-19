@@ -1,21 +1,21 @@
 import type { ReactNode } from 'react'
-import type { Filters } from '../types/dashboard'
-import { FilterBar } from './FilterBar'
+import type { PageId } from '../types/navigation'
 import { Sidebar } from './Sidebar'
 
 interface DashboardShellProps {
-  filters: Filters
-  onFiltersChange: (filters: Filters) => void
+  page: PageId
+  onNavigate: (page: PageId) => void
+  filterBar: ReactNode
   children: ReactNode
 }
 
-export function DashboardShell({ filters, onFiltersChange, children }: DashboardShellProps) {
+export function DashboardShell({ page, onNavigate, filterBar, children }: DashboardShellProps) {
   return (
     <div className="app-shell">
-      <Sidebar />
+      <Sidebar page={page} onNavigate={onNavigate} />
       <div className="app-main">
-        <FilterBar filters={filters} onChange={onFiltersChange} />
-        <main id="quality-assessment">{children}</main>
+        {filterBar}
+        <main id="main-content">{children}</main>
       </div>
     </div>
   )

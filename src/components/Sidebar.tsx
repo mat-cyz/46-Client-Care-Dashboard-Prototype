@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { BookOpen, Briefcase, ClipboardCheck, FileText, Gauge, LayoutDashboard, MessageSquareText, Star, Store, TableProperties, TrendingUp, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import type { PageId } from '../types/navigation'
 
 interface NavEntry {
   id: string
   label: string
   icon: LucideIcon
-  active?: boolean
+  page?: PageId
   scope?: string
 }
 
@@ -15,9 +16,9 @@ const NAVIGATION: NavEntry[] = [
   { id: 'advisor-scorecard', label: 'Advisor Scorecard', icon: Users, scope: 'advisor scorecards, coaching history, and productivity trends.' },
   { id: 'voice-of-customer', label: 'Voice of Customer', icon: MessageSquareText, scope: 'survey and sentiment trends.' },
   { id: 'voice-details', label: 'Voice Details', icon: TableProperties, scope: 'verbatim feedback with case-level drill-through.' },
-  { id: 'quality-assessment', label: 'Quality Assessment', icon: ClipboardCheck, active: true },
+  { id: 'quality-assessment', label: 'Quality Assessment', icon: ClipboardCheck, page: 'quality-assessment' },
   { id: 'product-reviews', label: 'Product Reviews', icon: Star, scope: 'review volume, rating trends, and sentiment by product.' },
-  { id: 'case-management', label: 'Case Management', icon: Briefcase, scope: 'case volume, backlog, and resolution times.' },
+  { id: 'case-management', label: 'Case Management', icon: Briefcase, page: 'case-management' },
   { id: 'sales-influence', label: 'Sales Influence', icon: TrendingUp, scope: 'client care impact on sales and conversion.' },
   { id: 'boutique-collaboration', label: 'Boutique Collaboration', icon: Store, scope: 'client care and boutique handoffs and follow-ups.' },
   { id: 'operational-performance', label: 'Operational Performance', icon: Gauge, scope: 'service levels, handle times, and staffing.' },
@@ -88,7 +89,7 @@ function PlannedItem({ entry }: { entry: NavEntry }) {
   )
 }
 
-export function Sidebar() {
+export function Sidebar({ page, onNavigate }: { page: PageId; onNavigate: (page: PageId) => void }) {
   return (
     <aside className="sidebar">
       <div className="wordmark">
@@ -100,10 +101,21 @@ export function Sidebar() {
       </div>
       <nav aria-label="Primary navigation">
         {NAVIGATION.map((entry) => {
-          if (!entry.active) return <PlannedItem key={entry.id} entry={entry} />
+          const target = entry.page
+          if (!target) return <PlannedItem key={entry.id} entry={entry} />
           const Icon = entry.icon
+          const active = target === page
           return (
-            <a key={entry.id} className="nav-item nav-active" href="#quality-assessment" aria-current="page">
+            <a
+              key={entry.id}
+              className={`nav-item ${active ? 'nav-active' : ''}`}
+              href={`#${target}`}
+              aria-current={active ? 'page' : undefined}
+              onClick={(event) => {
+                event.preventDefault()
+                onNavigate(target)
+              }}
+            >
               <Icon size={18} aria-hidden="true" />
               <span>{entry.label}</span>
             </a>

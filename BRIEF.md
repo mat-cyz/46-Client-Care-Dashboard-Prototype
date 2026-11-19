@@ -49,6 +49,115 @@ Stacked bar showing for all 4 categories (Resolution, Discovery, Process & Proce
 5. Channel Performance section (below Quality Distribution sectionn)
 - Compare phone, email, chat
 
+## Case Management project plan
+Business Objective for a single-page executive Case Management Reporting
+
+The Case Management & Resolution Dashboard will provide Client Care leadership, operations managers, team leaders, and support teams with visibility into case volumes, case outcomes, resolution effectiveness, boutique collaboration, escalations, and operational bottlenecks.
+The purpose of the dashboard is to help stakeholders answer:
+•	How many client cases are being handled?
+•	Are cases being resolved efficiently and effectively?
+•	Where are operational bottlenecks occurring?
+•	Which case types require the most effort?
+•	How often are cases escalated?
+•	How dependent is Client Care on boutique support?
+•	Are boutiques responding to Client Care inquiries in a timely manner?
+•	Which case categories drive the highest workload?
+•	Are clients receiving resolution in a timely manner?
+•	What trends are emerging that require operational attention?
+
+
+Group metrics into a few business stories that leadership can quickly understand:
+- Workload
+- Case Types
+- Resolution Effectiveness
+- Operational Risk
+- Case Lifecycle
+
+
+Case Management Reporting overview:
+
+1. Executive KPI Section (below filter/slicer section)
+•	Total Case Count
+•	Open Technical Bugs
+•	Escalated Case Count
+•	Requires Follow-Up Case Count
+•	First Call Resolution (%)
+
+Business Questions Answered
+•	How much work are we handling?
+•	How many cases require attention?
+•	How healthy is the operation today?
+
+
+2. Horizontal bar chart section with case counts by reason 
+Business Question
+Which case types/reasons generate the highest volume for Client Care?
+
+
+
+3. Dual-Axis Line Chart with Case Resolution Trend
+
+Measures:
+•	Case Resolution Time
+•	First Call Resolution (%)
+Over:
+•	Week
+•	Month
+
+Business Questions
+Are we resolving cases faster?
+Is faster resolution leading to better first-contact resolution?
+
+
+4. Scatter Plot with Operational Risk Matrix
+X-Axis:
+•	Average Case Duration
+Y-Axis:
+•	Escalation Rate
+Bubble Size:
+•	Total Cases
+Legend:
+•	Case Type
+Examples:
+•	Returns
+•	Repairs
+•	Technical Bugs
+•	Click & Collect
+Why? This is the most valuable visual on the dashboard.
+Leadership can instantly identify:
+•	High-volume/high-risk processes
+•	Slow-moving case categories
+•	Escalation hotspots
+Business Question
+Which case types create the greatest operational burden?
+
+5. Stacked Column Chart with Open Workload & Follow-Up Analysis
+Measures:
+•	Open Cases
+•	Requires Follow-Up Cases
+•	Escalated Cases
+Category:
+•	Team or Boutique
+Why? Highlights where unresolved workload is accumulating.
+Business Questions
+Which teams or boutiques need intervention?
+Where are cases getting stuck?
+ 
+ 6. Histogram or Stacked Bar with Case Aging Distribution
+Buckets:
+•	Same Day
+•	1-3 Days
+•	4-7 Days
+•	8-14 Days
+•	15+ Days
+Measure:
+•	Case Count
+Using:
+•	Case Duration Time
+Why? Executives immediately understand backlog risk.
+Business Questions
+How old are our open cases?
+Is backlog under control?
 
 
 ## Data Source
@@ -68,6 +177,8 @@ Salesforce Quality Assessment object with potential key fields:
 - Client Experience Discovery Score
 - Client Experience Process & Procedure Score
 - Client Experience Communication Score
+
+For Case Management page, the Case object from Salesforce in the main data source of data.
 
 ## Canvas Size and Design
 - Max-width 1920px 

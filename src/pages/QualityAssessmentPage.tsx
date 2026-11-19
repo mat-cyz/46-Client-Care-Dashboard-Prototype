@@ -1,37 +1,14 @@
-import type { ReactNode } from 'react'
 import { DIMENSIONS, QA_MAX, QA_TARGET } from '../data/constants'
 import type { DashboardData } from '../types/dashboard'
-import { fmtDate, fmtInt, fmtPct, fmtRefreshed, fmtScore, fmtSigned } from '../utils/format'
+import { fmtInt, fmtPct, fmtScore, fmtSigned } from '../utils/format'
 import { ChannelChart, DistributionChart, TeamRankChart, TrendChart } from '../components/Charts'
-import { Definitions } from '../components/Definitions'
+import { Footer } from '../components/Footer'
+import { InfoTip } from '../components/InfoTip'
 import { KpiCard } from '../components/KpiCard'
+import { Panel } from '../components/Panel'
 import { AdvisorTable, ChannelTable } from '../components/Tables'
 
 type LoadState = 'loading' | 'loaded' | 'error'
-
-function Panel({ title, subtitle, children, className = '' }: { title: string; subtitle?: string; children: ReactNode; className?: string }) {
-  return (
-    <section className={`panel ${className}`} aria-label={title}>
-      <header>
-        <h2>{title}</h2>
-        {subtitle && <p>{subtitle}</p>}
-      </header>
-      {children}
-    </section>
-  )
-}
-
-function Footer({ data }: { data: DashboardData }) {
-  const { meta } = data
-  return (
-    <footer className="footer">
-      <p>
-        <strong>Last refreshed:</strong> {fmtRefreshed(meta.lastRefreshed)} &middot; <strong>Data through:</strong> {fmtDate(meta.dataThrough)} &middot; Federated Data Platform (FDP) load completes before 5:00 AM Eastern &middot; <strong>Sources:</strong> {meta.sources.join(', ')}
-      </p>
-      <Definitions />
-    </footer>
-  )
-}
 
 export function QualityAssessmentPage({ data, state, onRetry }: { data: DashboardData | null; state: LoadState; onRetry: () => void }) {
   if (!data) {
@@ -83,17 +60,21 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
             />
             <KpiCard className="span-6" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" question="How many interactions were evaluated, and is the sample large enough to trust?" />
             <KpiCard className="span-6" label="Overall Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} question="What share of evaluated interactions meet our service standards?" />
-            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-100% range" meter={{ value: cx('resolution'), max: 100 }} question="Are advisors fully resolving what clients came to us for?" />
-            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-100% range" meter={{ value: cx('discovery'), max: 100 }} question="Are advisors asking the right questions to understand each client's need?" />
+            <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-120% range" meter={{ value: cx('resolution'), max: 120 }} question="Are advisors fully resolving what clients came to us for?" />
+            <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-120% range" meter={{ value: cx('discovery'), max: 120 }} question="Are advisors asking the right questions to understand each client's need?" />
             <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} question="Are advisors following the required processes and procedures?" />
-            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-100% range" meter={{ value: cx('communication'), max: 100 }} question="Are advisors communicating clearly and with the right tone?" />
+            <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-120% range" meter={{ value: cx('communication'), max: 120 }} question="Are advisors communicating clearly and with the right tone?" />
           </section>
 
           <div className="chart-grid">
             <Panel title="Average QA Score by Month" subtitle="Months with data in the selected year(s)">
               <TrendChart points={data.trend} />
             </Panel>
-            <Panel title="Quality Distribution" subtitle="Share of evaluations by rating, per Client Experience category">
+            <Panel
+              title="Quality Distribution"
+              subtitle="Share of evaluations by rating, per Client Experience category"
+              action={<InfoTip label="About the Exceeds Expectations rating" text="Exceeds Expectations (weight 120) applies to Resolution, Discovery, and Communication only; Process & Procedure tops out at 100%." />}
+            >
               <DistributionChart rows={data.distribution} />
             </Panel>
             <Panel title="Team Ranking by QA Score" subtitle="Highest to lowest average QA score">
@@ -110,7 +91,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
         </>
       )}
 
-      <Footer data={data} />
+      <Footer meta={data.meta} />
     </div>
   )
 }

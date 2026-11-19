@@ -1,37 +1,26 @@
-import { useDeferredValue, useEffect, useState } from 'react'
-import { DashboardShell } from './components/DashboardShell'
-import { defaultFilters } from './data/mockData'
-import { QualityAssessmentPage } from './pages/QualityAssessmentPage'
-import { dashboardDataAdapter } from './services/dashboardService'
-import type { DashboardData, Filters } from './types/dashboard'
+import { useEffect, useState } from 'react'
+import type { PageId } from './types/navigation'
+import { pageFromHash } from './types/navigation'
+import { CaseManagementView } from './views/CaseManagementView'
+import { QualityAssessmentView } from './views/QualityAssessmentView'
 
 function App() {
-  const [filters, setFilters] = useState<Filters>(defaultFilters)
-  const deferredFilters = useDeferredValue(filters)
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [state, setState] = useState<'loading' | 'loaded' | 'error'>('loading')
-  const [attempt, setAttempt] = useState(0)
+  const [page, setPage] = useState<PageId>(() => pageFromHash(window.location.hash))
 
   useEffect(() => {
-    const controller = new AbortController()
-    setState('loading')
-    dashboardDataAdapter
-      .getDashboardData(deferredFilters, controller.signal)
-      .then((result) => {
-        setData(result)
-        setState('loaded')
-      })
-      .catch((error: unknown) => {
-        if (!(error instanceof DOMException && error.name === 'AbortError')) setState('error')
-      })
-    return () => controller.abort()
-  }, [deferredFilters, attempt])
+    const onHashChange = () => setPage(pageFromHash(window.location.hash))
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
 
-  return (
-    <DashboardShell filters={filters} onFiltersChange={setFilters}>
-      <QualityAssessmentPage data={data} state={state} onRetry={() => setAttempt((n) => n + 1)} />
-    </DashboardShell>
-  )
+  const navigate = (next: PageId) => {
+    window.location.hash = next
+    setPage(next)
+  }
+
+  return page === 'case-management'
+    ? <CaseManagementView page={page} onNavigate={navigate} />
+    : <QualityAssessmentView page={page} onNavigate={navigate} />
 }
 
 export default App
