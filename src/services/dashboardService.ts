@@ -1,6 +1,6 @@
 import { DIMENSIONS, MONTHS, QA_TARGET, RATINGS } from '../data/constants'
 import type { DimensionKey, Rating } from '../data/constants'
-import { assessments, DATA_END, DATA_START, datasetMeta } from '../data/mockData'
+import { assessments, addDays, DATA_END, DATA_START, datasetMeta } from '../data/mockData'
 import type {
   AdvisorRow,
   ChannelRow,
@@ -58,6 +58,30 @@ function selectionLabel(f: Filters) {
   return `${months || 'No months'} ${years}`.trim()
 }
 
+// Rule-based stand-in for a smart narrative: the two largest changes since the prior day.
+function todaysBrief(rows: QualityAssessment[], basis: Filters['dateBasis']) {
+  const asOf = datasetMeta.dataThrough
+  const stats = (day: string) => summarize(rows.filter((r) => basisDate(r, basis) === day))
+  const today = stats(asOf)
+  const prior = stats(addDays(asOf, -1))
+  if (!today.volume || !prior.volume) return { asOf, text: 'Not enough evaluations to compare with yesterday.' }
+
+  const volumeDelta = today.volume - prior.volume
+  const qaDelta = today.avgQa - prior.avgQa
+  const rateDelta = today.passRate - prior.passRate
+  const changes = [
+    { score: Math.abs(volumeDelta) / Math.max(prior.volume, 5), text: `evaluation volume ${volumeDelta > 0 ? 'rose' : 'fell'} by ${Math.abs(volumeDelta)} to ${today.volume}`, changed: volumeDelta !== 0 },
+    { score: Math.abs(qaDelta) / 10, text: `average QA score ${qaDelta > 0 ? 'improved' : 'dropped'} ${Math.abs(qaDelta).toFixed(1)} pts to ${today.avgQa.toFixed(1)}`, changed: Math.round(Math.abs(qaDelta) * 10) > 0 },
+    { score: Math.abs(rateDelta) / 10, text: `overall EE rate ${rateDelta > 0 ? 'improved' : 'dropped'} ${Math.abs(rateDelta).toFixed(0)} pts to ${today.passRate.toFixed(0)}%`, changed: Math.round(Math.abs(rateDelta)) > 0 },
+  ]
+    .filter((c) => c.changed)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+
+  const text = changes.length ? `Since yesterday, ${changes.map((c) => c.text).join(', and ')}.` : 'No material change since yesterday.'
+  return { asOf, text }
+}
+
 function buildDashboardData(filters: Filters): DashboardData {
   const dimensionRows = assessments.filter((r) => matchesDimensions(r, filters))
 
@@ -105,7 +129,7 @@ function buildDashboardData(filters: Filters): DashboardData {
     })
     .sort((a, b) => a.avgQa - b.avgQa)
 
-  return { summary, trend, distribution, teams, channels, advisors, selectionLabel: selectionLabel(filters), meta: datasetMeta }
+  return { summary, trend, distribution, teams, channels, advisors, selectionLabel: selectionLabel(filters), brief: todaysBrief(dimensionRows, filters.dateBasis), meta: datasetMeta }
 }
 
 function delay(ms: number, signal?: AbortSignal) {

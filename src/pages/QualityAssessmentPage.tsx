@@ -34,6 +34,13 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
           <h1>Quality Assessment Reporting</h1>
           <p>Provides a high-level view of overall Client Care quality performance &middot; {selectionLabel}</p>
         </div>
+        <section className="brief" aria-label="Executive summary, today's brief">
+          <div className="brief-label">
+            <small>Executive Summary</small>
+            <strong>Today&apos;s Brief</strong>
+          </div>
+          <p>{data.brief.text}</p>
+        </section>
         <span className="badge">Mock data</span>
       </div>
 
@@ -59,7 +66,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
               question="Are we ahead of or behind our quality target, and by how much?"
             />
             <KpiCard className="span-6" label="Evaluation Volume" value={fmtInt(summary.volume)} note="Total QA assessments" question="How many interactions were evaluated, and is the sample large enough to trust?" />
-            <KpiCard className="span-6" label="Overall Pass Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} question="What share of evaluated interactions meet our service standards?" />
+            <KpiCard className="span-6" label="Overall EE Rate" value={fmtPct(summary.passRate)} note='Overall QA = "Yes"' meter={{ value: summary.passRate, max: 100 }} question="What share of evaluated interactions meet our service standards?" />
             <KpiCard className="span-3" label="Resolution" value={fmtPct(cx('resolution'))} note="Average, 0%-120% range" meter={{ value: cx('resolution'), max: 120 }} question="Are advisors fully resolving what clients came to us for?" />
             <KpiCard className="span-3" label="Discovery" value={fmtPct(cx('discovery'))} note="Average, 0%-120% range" meter={{ value: cx('discovery'), max: 120 }} question="Are advisors asking the right questions to understand each client's need?" />
             <KpiCard className="span-3" label="Process & Procedure" value={fmtPct(cx('processProcedure'))} note="Average, 0%-100% range" meter={{ value: cx('processProcedure'), max: 100 }} question="Are advisors following the required processes and procedures?" />
@@ -67,7 +74,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
           </section>
 
           <div className="chart-grid">
-            <Panel title="Average QA Score by Month" subtitle="Months with data in the selected year(s)">
+            <Panel title="Average QA Score and Evaluation Volume by Month" subtitle="Months with data in the selected year(s)">
               <TrendChart points={data.trend} />
             </Panel>
             <Panel

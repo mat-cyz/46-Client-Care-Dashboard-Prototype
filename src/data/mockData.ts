@@ -153,7 +153,7 @@ export const defaultFilters: Filters = {
 }
 
 export const datasetMeta: DatasetMeta = {
-  lastRefreshed: '2026-12-01T05:52:00-05:00',
-  dataThrough: DATA_END,
+  lastRefreshed: '2026-11-19T05:52:00-05:00',
+  dataThrough: '2026-11-18',
   sources: ['Salesforce', 'Genesys', 'Medallia', 'Emplifi', 'PFS Web Sales', 'Product data'],
 }

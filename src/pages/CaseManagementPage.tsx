@@ -58,7 +58,7 @@ export function CaseManagementPage({ data, state, onRetry }: { data: CaseDashboa
     <div aria-busy={state === 'loading'} className={`page ${state === 'loading' ? 'is-loading' : ''}`}>
       <div className="page-header">
         <div>
-          <h1>Case Management Reporting</h1>
+          <h1>Case Management and Resolution Reporting</h1>
           <p>Provides a high-level view of case volumes, resolution effectiveness, and operational risk &middot; {data.selectionLabel}</p>
         </div>
         <section className="brief" aria-label="Executive summary, today's brief">

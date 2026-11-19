@@ -85,5 +85,6 @@ export interface DashboardData {
   channels: ChannelRow[]
   advisors: AdvisorRow[]
   selectionLabel: string
+  brief: { asOf: string; text: string }
   meta: DatasetMeta
 }

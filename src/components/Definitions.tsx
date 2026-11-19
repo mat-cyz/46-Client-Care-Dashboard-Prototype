@@ -7,7 +7,7 @@ export const QA_DEFINITIONS = [
   ['QA Score Target', `Benchmark of ${QA_TARGET}.`],
   ['Variance to Target', 'Average QA Score minus the QA Score Target.'],
   ['Evaluation Volume', 'Count of QA assessments in the current selection.'],
-  ['Overall Pass Rate', 'Share of evaluations where Overall QA is "Yes": QA score of at least 80 and Resolution not rated 0%.'],
+  ['Overall Exceeds Expectations Rate (Overall EE Rate)', 'Share of evaluations where Overall QA is "Yes": QA score of at least 80 and Resolution not rated 0%.'],
   ['Client Experience scores', `Average rating weight for Resolution, Discovery, and Communication (${RATINGS.map((r) => r.pct).join(', ')}; Exceeds Expectations scores 120, so these reach 120%) and for Process & Procedure (no Exceeds option; maximum 100%).`],
 ] as const
 

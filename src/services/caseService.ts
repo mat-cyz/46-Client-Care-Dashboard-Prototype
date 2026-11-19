@@ -63,8 +63,9 @@ function dayStats(rows: CaseRecord[], day: string): DayStats {
 
 // Rule-based stand-in for the Power BI smart narrative: the two largest changes since the prior day.
 function todaysBrief(rows: CaseRecord[]) {
-  const today = dayStats(rows, DATA_END)
-  const prior = dayStats(rows, addDays(DATA_END, -1))
+  const asOf = datasetMeta.dataThrough
+  const today = dayStats(rows, asOf)
+  const prior = dayStats(rows, addDays(asOf, -1))
   const counts = [
     ['new cases', 'newCases'],
     ['escalations', 'escalations'],
@@ -87,7 +88,7 @@ function todaysBrief(rows: CaseRecord[]) {
     .slice(0, 2)
 
   const text = changes.length ? `Since yesterday, ${changes.map((c) => c.text).join(', and ')}.` : 'No material change since yesterday.'
-  return { asOf: DATA_END, text }
+  return { asOf, text }
 }
 
 function selectionLabel(f: CaseFilters) {

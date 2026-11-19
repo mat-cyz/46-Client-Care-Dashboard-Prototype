@@ -16,11 +16,12 @@ import {
 import type { CSSProperties, ReactElement } from 'react'
 import { DIMENSIONS, QA_MAX, QA_TARGET, RATINGS } from '../data/constants'
 import type { ChannelRow, DistributionRow, TeamRow, TrendPoint } from '../types/dashboard'
-import { fmtPct, fmtScore, teamLabel } from '../utils/format'
+import { fmtInt, fmtPct, fmtScore, teamLabel } from '../utils/format'
 
 const INK = '#070F25'
 const NAVY = '#0F1934'
 const CORAL = '#FD625E'
+const TEAL = '#168980'
 const GRID = '#E3E3E3'
 const TICK = { fontSize: 12, fill: '#475052' }
 const TOOLTIP_STYLE = { border: `1px solid ${GRID}`, borderRadius: 0, fontSize: 12, color: INK }
@@ -53,26 +54,31 @@ function TrendDot({ cx, cy, payload }: TrendDotProps) {
 
 export function TrendChart({ points }: { points: TrendPoint[] }) {
   return (
-    <div className="chart" role="img" aria-label="Line chart of average QA score by month with target of 80">
-      <Plot height={165}>
-        <LineChart data={points} margin={{ top: 16, right: 16, bottom: 0, left: -10 }}>
+    <div className="chart" role="img" aria-label="Dual-axis line chart of average QA score and evaluation volume by month, with QA target of 80">
+      <Plot height={185}>
+        <LineChart data={points} margin={{ top: 16, right: 0, bottom: 0, left: -10 }}>
           <CartesianGrid vertical={false} stroke={GRID} />
           <XAxis dataKey="label" interval={0} tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
           <YAxis
+            yAxisId="qa"
             tick={TICK}
             tickLine={false}
             axisLine={false}
             width={44}
             domain={[(min: number) => Math.floor(Math.min(min, QA_TARGET) - 5), (max: number) => Math.ceil(Math.max(max, QA_TARGET) + 5)]}
           />
+          <YAxis yAxisId="volume" orientation="right" tick={{ ...TICK, fill: TEAL }} tickLine={false} axisLine={false} width={44} domain={[0, (max: number) => Math.ceil(max * 1.1)]} />
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
-            formatter={(value, _name, item) => [`${fmtScore(asNumber(value))} (${(item.payload as TrendPoint).volume} evaluations)`, 'Avg QA Score']}
+            formatter={(value, name) => [name === 'Avg QA Score' ? fmtScore(asNumber(value)) : fmtInt(asNumber(value)), name]}
           />
-          <ReferenceLine y={QA_TARGET} stroke={CORAL} strokeDasharray="5 4" label={{ value: `Target ${QA_TARGET}`, position: 'insideBottomRight', fontSize: 11, fill: '#BB4A4A' }} />
+          <Legend verticalAlign="top" height={20} iconType="plainline" wrapperStyle={{ fontSize: 11 }} />
+          <ReferenceLine yAxisId="qa" y={QA_TARGET} stroke={CORAL} strokeDasharray="5 4" label={{ value: `QA Score Target ${QA_TARGET}`, position: 'insideBottomRight', fontSize: 11, fill: '#BB4A4A' }} />
           <Line
+            yAxisId="qa"
             type="monotone"
             dataKey="avgQa"
+            name="Avg QA Score"
             stroke={NAVY}
             strokeWidth={2}
             connectNulls
@@ -82,6 +88,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
               return <TrendDot key={payload?.label} cx={cx} cy={cy} payload={payload} />
             }}
           />
+          <Line yAxisId="volume" type="monotone" dataKey="volume" name="Evaluation Volume" stroke={TEAL} strokeWidth={2} strokeDasharray="2 3" dot={false} isAnimationActive={false} />
         </LineChart>
       </Plot>
       <p className="chart-note">Filled markers show the selected months; the trend ignores the Month filter.</p>

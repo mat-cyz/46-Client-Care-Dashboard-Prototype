@@ -33,15 +33,22 @@ const TOOLTIP_STYLE = { border: `1px solid ${GRID}`, borderRadius: 0, fontSize: 
 const asNumber = (value: unknown) => (typeof value === 'number' ? value : Number(value))
 const days = (value: number) => `${value.toFixed(1)} days`
 
+// Recharts' default tick wraps long labels onto a second line.
+function SingleLineTick({ x, y, payload }: { x?: number | string; y?: number | string; payload?: { value: string } }) {
+  return (
+    <text x={Number(x) - 4} y={y} dy="0.32em" textAnchor="end" fontSize={11} fill={INK}>{payload?.value}</text>
+  )
+}
+
 export function ReasonBarChart({ rows }: { rows: ReasonRow[] }) {
   const total = rows.reduce((sum, row) => sum + row.cases, 0)
   return (
     <div className="chart" role="img" aria-label="Horizontal bar chart of case counts by reason">
-      <Plot height={230}>
-        <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 40, bottom: 0, left: 0 }} barCategoryGap={6}>
+      <Plot height={260}>
+        <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 40, bottom: 0, left: 0 }} barCategoryGap={2}>
           <CartesianGrid horizontal={false} stroke={GRID} />
           <XAxis type="number" tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
-          <YAxis type="category" dataKey="reason" width={176} tick={{ ...TICK, fontSize: 11, fill: INK }} tickLine={false} axisLine={false} interval={0} />
+          <YAxis type="category" dataKey="reason" width={176} tick={SingleLineTick} tickLine={false} axisLine={false} interval={0} />
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
             cursor={{ fill: 'rgba(0,0,0,0.04)' }}
