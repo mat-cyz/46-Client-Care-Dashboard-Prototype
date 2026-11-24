@@ -7,29 +7,30 @@ export const DATA_END = '2026-11-30'
 
 interface Advisor {
   name: string
+  teamLead: string
   manager: string
   skill: number
 }
 
 const ADVISORS: Advisor[] = [
-  { name: 'Amelie Laurent', manager: 'Elena Vasquez', skill: 0.45 },
-  { name: 'Camille Rousseau', manager: 'Elena Vasquez', skill: 0.2 },
-  { name: 'Juliette Marchand', manager: 'Elena Vasquez', skill: -0.15 },
-  { name: 'Sophie Bernard', manager: 'Elena Vasquez', skill: 0.05 },
-  { name: 'Olivia Chen', manager: 'Gregory Hale', skill: 0.55 },
-  { name: 'Marcus Whitfield', manager: 'Gregory Hale', skill: -0.4 },
-  { name: 'Daniel Ortiz', manager: 'Gregory Hale', skill: 0.1 },
-  { name: 'Priya Nair', manager: 'Gregory Hale', skill: 0.3 },
-  { name: 'Hannah Brooks', manager: 'Natalie Okafor', skill: -0.25 },
-  { name: 'Lucas Moreau', manager: 'Natalie Okafor', skill: 0.0 },
-  { name: 'Isabelle Hart', manager: 'Natalie Okafor', skill: 0.35 },
-  { name: 'Noah Fischer', manager: 'Natalie Okafor', skill: -0.55 },
-  { name: 'Tessa Aldridge', manager: 'Elena Vasquez', skill: 0.25 },
-  { name: 'Rafael Mendes', manager: 'Elena Vasquez', skill: -0.3 },
-  { name: 'Yuki Tanaka', manager: 'Gregory Hale', skill: 0.4 },
-  { name: 'Brianna Cole', manager: 'Gregory Hale', skill: -0.1 },
-  { name: 'Omar Haddad', manager: 'Natalie Okafor', skill: 0.15 },
-  { name: 'Chloe Winters', manager: 'Natalie Okafor', skill: -0.45 },
+  { name: 'Amelie Laurent', teamLead: 'Claire Dubois', manager: 'Elena Vasquez', skill: 0.45 },
+  { name: 'Camille Rousseau', teamLead: 'Claire Dubois', manager: 'Elena Vasquez', skill: 0.2 },
+  { name: 'Juliette Marchand', teamLead: 'Claire Dubois', manager: 'Elena Vasquez', skill: -0.15 },
+  { name: 'Sophie Bernard', teamLead: 'Victor Lambert', manager: 'Elena Vasquez', skill: 0.05 },
+  { name: 'Olivia Chen', teamLead: 'Megan Powell', manager: 'Gregory Hale', skill: 0.55 },
+  { name: 'Marcus Whitfield', teamLead: 'Megan Powell', manager: 'Gregory Hale', skill: -0.4 },
+  { name: 'Daniel Ortiz', teamLead: 'Megan Powell', manager: 'Gregory Hale', skill: 0.1 },
+  { name: 'Priya Nair', teamLead: 'Andre Silva', manager: 'Gregory Hale', skill: 0.3 },
+  { name: 'Hannah Brooks', teamLead: 'Rachel Kim', manager: 'Natalie Okafor', skill: -0.25 },
+  { name: 'Lucas Moreau', teamLead: 'Rachel Kim', manager: 'Natalie Okafor', skill: 0.0 },
+  { name: 'Isabelle Hart', teamLead: 'Rachel Kim', manager: 'Natalie Okafor', skill: 0.35 },
+  { name: 'Noah Fischer', teamLead: 'Jordan Reyes', manager: 'Natalie Okafor', skill: -0.55 },
+  { name: 'Tessa Aldridge', teamLead: 'Victor Lambert', manager: 'Elena Vasquez', skill: 0.25 },
+  { name: 'Rafael Mendes', teamLead: 'Victor Lambert', manager: 'Elena Vasquez', skill: -0.3 },
+  { name: 'Yuki Tanaka', teamLead: 'Andre Silva', manager: 'Gregory Hale', skill: 0.4 },
+  { name: 'Brianna Cole', teamLead: 'Andre Silva', manager: 'Gregory Hale', skill: -0.1 },
+  { name: 'Omar Haddad', teamLead: 'Jordan Reyes', manager: 'Natalie Okafor', skill: 0.15 },
+  { name: 'Chloe Winters', teamLead: 'Jordan Reyes', manager: 'Natalie Okafor', skill: -0.45 },
 ]
 
 const YEAR_SHIFT: Record<string, number> = { '2024': -0.25, '2025': -0.15, '2026': 0 }
@@ -40,6 +41,8 @@ const TEAM_SHIFT: Record<Team, number> = { 'Team Lead': 0.25, QA: 0.05, Self_Ass
 const TEAM_WEIGHT: Record<Team, number> = { 'Team Lead': 22, QA: 40, Self_Assessment: 15, Calibration: 10, Nesting: 13 }
 const CHANNEL_SHIFT: Record<Channel, number> = { Phone: 0, Email: 0.15, Chat: -0.15 }
 const CHANNEL_WEIGHT: Record<Channel, number> = { Phone: 45, Email: 30, Chat: 25 }
+// Each QA evaluation samples roughly this many handled interactions in its channel.
+const INTERACTIONS_PER_EVAL: Record<Channel, number> = { Phone: 18, Email: 12, Chat: 25 }
 const DIMENSION_BIAS = { resolution: 0.1, discovery: -0.15, processProcedure: -0.25, communication: 0.15 }
 
 const DAY_MS = 86_400_000
@@ -109,14 +112,17 @@ function generateAssessments(): QualityAssessment[] {
         status = 'Disputed'
       }
 
+      const interactions = INTERACTIONS_PER_EVAL[channel] + (sequence % 7) - 3
       records.push({
         assessmentId: `QA-${String(sequence++).padStart(6, '0')}`,
+        interactions,
         caseNumber: `CS-${10_000_000 + Math.floor(rand() * 89_999_999)}`,
         team,
         status,
         createdDate: date,
         completedDate,
         advisor: advisor.name,
+        teamLead: advisor.teamLead,
         manager: advisor.manager,
         channel,
         overallPass: qaScore >= 80 && resolution !== 'opportunity' ? 'Yes' : 'No',
@@ -139,8 +145,13 @@ export const filterOptions = {
   teams: TEAMS as readonly string[],
   channels: CHANNELS as readonly string[],
   statuses: STATUSES as readonly string[],
+  managers: [...new Set(ADVISORS.map((a) => a.manager))].sort() as readonly string[],
+  teamLeads: [...new Set(ADVISORS.map((a) => a.teamLead))].sort() as readonly string[],
   advisors: ADVISORS.map((a) => a.name).sort() as readonly string[],
 }
+
+// Manager -> Team Lead -> Advisor roster used to cascade the leadership filters.
+export const hierarchy = ADVISORS.map((a) => ({ manager: a.manager, teamLead: a.teamLead, advisor: a.name }))
 
 export const defaultFilters: Filters = {
   dateBasis: 'created',
@@ -149,11 +160,13 @@ export const defaultFilters: Filters = {
   teams: [...filterOptions.teams],
   channels: [...filterOptions.channels],
   statuses: [...filterOptions.statuses],
+  managers: [...filterOptions.managers],
+  teamLeads: [...filterOptions.teamLeads],
   advisors: [...filterOptions.advisors],
 }
 
 export const datasetMeta: DatasetMeta = {
-  lastRefreshed: '2026-11-19T05:52:00-05:00',
-  dataThrough: '2026-11-18',
+  lastRefreshed: '2026-11-24T05:52:00-05:00',
+  dataThrough: '2026-11-23',
   sources: ['Salesforce', 'Genesys', 'Medallia', 'Emplifi', 'PFS Web Sales', 'Product data'],
 }

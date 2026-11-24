@@ -15,8 +15,8 @@ import {
 } from 'recharts'
 import type { CSSProperties, ReactElement } from 'react'
 import { DIMENSIONS, QA_MAX, QA_TARGET, RATINGS } from '../data/constants'
-import type { ChannelRow, DistributionRow, TeamRow, TrendPoint } from '../types/dashboard'
-import { fmtInt, fmtPct, fmtScore, teamLabel } from '../utils/format'
+import type { ChannelRow, DistributionRow, RankRow, TrendPoint } from '../types/dashboard'
+import { fmtInt, fmtPct, fmtScore } from '../utils/format'
 
 const INK = '#070F25'
 const NAVY = '#0F1934'
@@ -133,23 +133,23 @@ export function DistributionChart({ rows }: { rows: DistributionRow[] }) {
   )
 }
 
-export function TeamRankChart({ rows }: { rows: TeamRow[] }) {
-  const data = rows.map((row) => ({ ...row, label: `#${row.rank} ${teamLabel(row.team)}` }))
+export function LeadershipRankChart({ rows, level }: { rows: RankRow[]; level: string }) {
+  const data = rows.map((row) => ({ ...row, label: `#${row.rank} ${row.name}` }))
   return (
-    <div className="chart" role="img" aria-label="Bar chart ranking teams by average QA score">
-      <Plot height={Math.max(150, data.length * 34 + 20)}>
-        <BarChart data={data} layout="vertical" margin={{ top: 8, right: 36, bottom: 0, left: 0 }} barCategoryGap={12}>
+    <div className="chart" role="img" aria-label={`Bar chart ranking ${level.toLowerCase()}s by average QA score`}>
+      <Plot height={Math.max(150, data.length * 40 + 20)}>
+        <BarChart data={data} layout="vertical" margin={{ top: 8, right: 36, bottom: 0, left: 0 }} barCategoryGap="25%">
           <CartesianGrid horizontal={false} stroke={GRID} />
           <XAxis type="number" domain={[0, QA_MAX]} ticks={[0, 40, 80, 120]} tick={TICK} tickLine={false} axisLine={{ stroke: GRID }} />
-          <YAxis type="category" dataKey="label" width={124} tick={{ ...TICK, fill: INK }} tickLine={false} axisLine={false} />
+          <YAxis type="category" dataKey="label" width={140} tick={{ ...TICK, fill: INK }} tickLine={false} axisLine={false} />
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
             cursor={{ fill: 'rgba(0,0,0,0.04)' }}
-            formatter={(value, _name, item) => [`${fmtScore(asNumber(value))} (${(item.payload as TeamRow).volume} evaluations)`, 'Avg QA Score']}
+            formatter={(value, _name, item) => [`${fmtScore(asNumber(value))} (${(item.payload as RankRow).volume} evaluations)`, 'Avg QA Score']}
           />
           <ReferenceLine x={QA_TARGET} stroke={CORAL} strokeDasharray="5 4" />
-          <Bar dataKey="avgQa" isAnimationActive={false}>
-            {data.map((row) => <Cell key={row.team} fill={row.avgQa >= QA_TARGET ? NAVY : CORAL} />)}
+          <Bar dataKey="avgQa" maxBarSize={24} isAnimationActive={false}>
+            {data.map((row) => <Cell key={row.name} fill={row.avgQa >= QA_TARGET ? NAVY : CORAL} />)}
             <LabelList dataKey="avgQa" position="right" fontSize={12} fill={INK} formatter={(value: unknown) => fmtScore(asNumber(value))} />
           </Bar>
         </BarChart>

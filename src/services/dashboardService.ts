@@ -10,7 +10,7 @@ import type {
   Filters,
   QualityAssessment,
   Summary,
-  TeamRow,
+  RankRow,
   TrendPoint,
 } from '../types/dashboard'
 
@@ -49,7 +49,7 @@ const basisDate = (r: QualityAssessment, basis: Filters['dateBasis']) => (basis 
 
 // Applies every filter except the period so the trend can show every month of the selected years.
 function matchesDimensions(r: QualityAssessment, f: Filters) {
-  return f.teams.includes(r.team) && f.channels.includes(r.channel) && f.statuses.includes(r.status) && f.advisors.includes(r.advisor)
+  return f.teams.includes(r.team) && f.channels.includes(r.channel) && f.statuses.includes(r.status) && f.managers.includes(r.manager) && f.teamLeads.includes(r.teamLead) && f.advisors.includes(r.advisor)
 }
 
 function selectionLabel(f: Filters) {
@@ -110,26 +110,42 @@ function buildDashboardData(filters: Filters): DashboardData {
     return row
   })
 
-  const teams: TeamRow[] = [...groupBy(inPeriod, (r) => r.team)]
-    .map(([team, rows]) => ({ team, rank: 0, ...summarize(rows) }))
+  const rankBy = (key: (r: QualityAssessment) => string): RankRow[] =>
+    [...groupBy(inPeriod, key)]
+      .map(([name, rows]) => ({ name, rank: 0, ...summarize(rows) }))
+      .sort((a, b) => b.avgQa - a.avgQa)
+      .map((row, index) => ({ ...row, rank: index + 1 }))
+  const managers = rankBy((r) => r.manager)
+  const teamLeads = rankBy((r) => r.teamLead)
     .sort((a, b) => b.avgQa - a.avgQa)
     .map((row, index) => ({ ...row, rank: index + 1 }))
 
-  const channels: ChannelRow[] = ['Phone', 'Email', 'Chat']
-    .map((channel) => ({ channel, ...summarize(inPeriod.filter((r) => r.channel === channel)) }))
+  const channels: ChannelRow[] = ['Phone', 'Email', 'Chat'].map((channel) => {
+    const rows = inPeriod.filter((r) => r.channel === channel)
+    return { channel, interactions: rows.reduce((sum, r) => sum + r.interactions, 0), ...summarize(rows) }
+  })
 
   const summary = summarize(inPeriod)
 
   const advisors: AdvisorRow[] = [...groupBy(inPeriod, (r) => r.advisor)]
     .map(([advisor, rows]) => {
       const s = summarize(rows)
-      const lowest = DIMENSIONS.map((d) => ({ label: d.label, score: s.cx[d.key] })).reduce((a, b) => (b.score < a.score ? b : a))
+      const lowest = DIMENSIONS.map((d) => ({ label: d.shortLabel, score: s.cx[d.key] })).reduce((a, b) => (b.score < a.score ? b : a))
       const flag: AdvisorRow['flag'] = s.avgQa < QA_TARGET ? 'At risk' : s.avgQa < summary.avgQa ? 'Watch' : 'On track'
-      return { advisor, manager: rows[0].manager, lowestDimension: lowest, flag, ...s }
+      return {
+        advisor,
+        manager: rows[0].manager,
+        calls: rows.filter((r) => r.channel === 'Phone').length,
+        emails: rows.filter((r) => r.channel === 'Email').length,
+        chats: rows.filter((r) => r.channel === 'Chat').length,
+        lowestDimension: lowest,
+        flag,
+        ...s,
+      }
     })
     .sort((a, b) => a.avgQa - b.avgQa)
 
-  return { summary, trend, distribution, teams, channels, advisors, selectionLabel: selectionLabel(filters), brief: todaysBrief(dimensionRows, filters.dateBasis), meta: datasetMeta }
+  return { summary, trend, distribution, managers, teamLeads, channels, advisors, selectionLabel: selectionLabel(filters), brief: todaysBrief(dimensionRows, filters.dateBasis), meta: datasetMeta }
 }
 
 function delay(ms: number, signal?: AbortSignal) {

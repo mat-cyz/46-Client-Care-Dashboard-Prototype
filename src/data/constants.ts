@@ -17,10 +17,10 @@ export const RATINGS = [
 ] as const
 
 export const DIMENSIONS = [
-  { key: 'resolution', label: 'Resolution', color: '#0F1934', maxPct: 120 },
-  { key: 'discovery', label: 'Discovery', color: '#8AD4EB', maxPct: 120 },
-  { key: 'processProcedure', label: 'Process & Procedure', color: '#B887AD', maxPct: 100 },
-  { key: 'communication', label: 'Communication', color: '#FD625E', maxPct: 120 },
+  { key: 'resolution', label: 'Resolution', shortLabel: 'Resolution', color: '#0F1934', maxPct: 120 },
+  { key: 'discovery', label: 'Discovery', shortLabel: 'Discovery', color: '#8AD4EB', maxPct: 120 },
+  { key: 'processProcedure', label: 'Process & Procedure', shortLabel: 'Process & Proc.', color: '#B887AD', maxPct: 100 },
+  { key: 'communication', label: 'Communication', shortLabel: 'Communication', color: '#FD625E', maxPct: 120 },
 ] as const
 
 export type Team = (typeof TEAMS)[number]

@@ -735,6 +735,11 @@ tbody th {
   font-variant-numeric: tabular-nums;
 }
 
+.center-cols th:not(:first-child),
+.center-cols td {
+  text-align: center;
+}
+
 .flag {
   display: inline-flex;
   align-items: center;
@@ -949,6 +954,10 @@ tbody th {
     min-height: 0;
   }
 
+  .chart-grid.has-advisors {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
   .panel {
     display: flex;
     flex-direction: column;
@@ -987,6 +996,11 @@ tbody th {
 
   th, td {
     padding: 4px 6px;
+  }
+
+  .advisors th,
+  .advisors td {
+    padding: 4px 4px;
   }
 
   .legend {

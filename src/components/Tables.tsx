@@ -12,12 +12,15 @@ const FLAG_ICON = {
 export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
   return (
     <div className="table-wrap">
-      <table>
+      <table className="center-cols">
         <caption className="sr-only">Advisors ranked from lowest to highest average QA score</caption>
         <thead>
           <tr>
             <th scope="col">Advisor</th>
             <th scope="col" className="num">Evals</th>
+            <th scope="col" className="num">Calls</th>
+            <th scope="col" className="num">Emails</th>
+            <th scope="col" className="num">Chats</th>
             <th scope="col" className="num">Avg QA</th>
             <th scope="col" className="num">EE Rate</th>
             <th scope="col">Lowest CX Category</th>
@@ -29,6 +32,9 @@ export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
             <tr key={row.advisor}>
               <th scope="row">{row.advisor}</th>
               <td className="num">{fmtInt(row.volume)}</td>
+              <td className="num">{fmtInt(row.calls)}</td>
+              <td className="num">{fmtInt(row.emails)}</td>
+              <td className="num">{fmtInt(row.chats)}</td>
               <td className="num">{fmtScore(row.avgQa)}</td>
               <td className="num">{fmtPct(row.passRate)}</td>
               <td>{row.lowestDimension.label} ({fmtPct(row.lowestDimension.score)})</td>
@@ -44,12 +50,13 @@ export function AdvisorTable({ rows }: { rows: AdvisorRow[] }) {
 export function ChannelTable({ rows }: { rows: ChannelRow[] }) {
   return (
     <div className="table-wrap">
-      <table>
+      <table className="center-cols">
         <caption className="sr-only">Channel performance summary</caption>
         <thead>
           <tr>
             <th scope="col">Channel</th>
             <th scope="col" className="num">Evals</th>
+            <th scope="col" className="num">Volume</th>
             <th scope="col" className="num">Avg QA</th>
             <th scope="col" className="num">Vs Target</th>
             <th scope="col" className="num">EE Rate</th>
@@ -60,6 +67,7 @@ export function ChannelTable({ rows }: { rows: ChannelRow[] }) {
             <tr key={row.channel}>
               <th scope="row">{row.channel}</th>
               <td className="num">{fmtInt(row.volume)}</td>
+              <td className="num">{fmtInt(row.interactions)}</td>
               <td className="num">{row.volume ? fmtScore(row.avgQa) : '-'}</td>
               <td className="num">{row.volume ? fmtSigned(row.avgQa - QA_TARGET) : '-'}</td>
               <td className="num">{row.volume ? fmtPct(row.passRate) : '-'}</td>

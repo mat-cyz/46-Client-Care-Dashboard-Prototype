@@ -1,14 +1,31 @@
+import { useState } from 'react'
 import { DIMENSIONS, QA_MAX, QA_TARGET } from '../data/constants'
-import type { DashboardData } from '../types/dashboard'
+import type { DashboardData, RankRow } from '../types/dashboard'
 import { fmtInt, fmtPct, fmtScore, fmtSigned } from '../utils/format'
-import { ChannelChart, DistributionChart, TeamRankChart, TrendChart } from '../components/Charts'
+import { ChannelChart, DistributionChart, LeadershipRankChart, TrendChart } from '../components/Charts'
 import { Footer } from '../components/Footer'
 import { InfoTip } from '../components/InfoTip'
 import { KpiCard } from '../components/KpiCard'
 import { Panel } from '../components/Panel'
+import { SegmentedControl } from '../components/SegmentedControl'
 import { AdvisorTable, ChannelTable } from '../components/Tables'
 
 type LoadState = 'loading' | 'loaded' | 'error'
+
+const RANK_LEVELS = ['Manager', 'Team Lead'] as const
+
+function RankingPanel({ managers, teamLeads }: { managers: RankRow[]; teamLeads: RankRow[] }) {
+  const [level, setLevel] = useState<(typeof RANK_LEVELS)[number]>('Team Lead')
+  return (
+    <Panel
+      title={`${level} Ranking by QA Score`}
+      subtitle="Highest to lowest average QA score"
+      action={<SegmentedControl label="Ranking level" options={RANK_LEVELS} value={level} onChange={setLevel} />}
+    >
+      <LeadershipRankChart rows={level === 'Manager' ? managers : teamLeads} level={level} />
+    </Panel>
+  )
+}
 
 export function QualityAssessmentPage({ data, state, onRetry }: { data: DashboardData | null; state: LoadState; onRetry: () => void }) {
   if (!data) {
@@ -73,7 +90,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
             <KpiCard className="span-3" label="Communication" value={fmtPct(cx('communication'))} note="Average, 0%-120% range" meter={{ value: cx('communication'), max: 120 }} question="Are advisors communicating clearly and with the right tone?" />
           </section>
 
-          <div className="chart-grid">
+          <div className="chart-grid has-advisors">
             <Panel title="Average QA Score and Evaluation Volume by Month" subtitle="Months with data in the selected year(s)">
               <TrendChart points={data.trend} />
             </Panel>
@@ -84,9 +101,7 @@ export function QualityAssessmentPage({ data, state, onRetry }: { data: Dashboar
             >
               <DistributionChart rows={data.distribution} />
             </Panel>
-            <Panel title="Team Ranking by QA Score" subtitle="Highest to lowest average QA score">
-              <TeamRankChart rows={data.teams} />
-            </Panel>
+            <RankingPanel managers={data.managers} teamLeads={data.teamLeads} />
             <Panel title="Channel Performance" subtitle="Phone, Email, and Chat">
               <ChannelChart rows={data.channels} />
               <ChannelTable rows={data.channels} />
